@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Observatório territorial da CIM Alto Minho com indicadores municipais do INE e da Pordata.">
+  <title>Transferência de Documentos | Observatório Alto Minho</title>
+  <link rel="icon" type="image/svg+xml" href="../imgs/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/transferencias.css">
+</head>
+<body data-page="transferencias">
+  <header class="rail">
+    <a class="brand" href="../../index.html" aria-label="Observatório Alto Minho — início">
+      <span class="brand-symbol" aria-hidden="true"><img src="../imgs/cim-alto-minho.svg" alt=""></span>
+      <span><b>Alto Minho</b><small>Observatório territorial</small></span>
+    </a>
+    <div class="rail-territory">
+      <label for="territory-select">Território em análise</label>
+      <select id="territory-select" aria-label="Escolha o território"></select>
+      <p>10 municípios · NUTS III Alto Minho</p>
+    </div>
+    <nav aria-label="Navegação principal">
+      <a href="../../index.html"><span>01</span>Retrato</a>
+      <a href="./indicadores.html"><span>02</span>Indicadores</a>
+      <a href="./comparar.html"><span>03</span>Comparar</a>
+      <a href="./metodologia.html"><span>04</span>Metodologia</a>
+      <a class="active" aria-current="page" href="./transferencias.html"><span>05</span>Documentos</a>
+    </nav>
+    <div class="rail-note">
+      <span class="source-dot"></span>
+      <p>Dados estatísticos<br><strong>INE · Pordata</strong></p>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="workspace page-workspace">
+      <section class="themes" aria-labelledby="themes-title">
+        <div class="section-index">05</div>
+        <div class="section-copy">
+          <p class="overline">Áreas de Documentos</p>
+          <h2 id="themes-title">Documentos para Transferência</h2>
+        </div>
+      </section>
+
+      <div class="doc-grid">
+        <article class="doc-card">
+          <img class="doc-thumb" src="../imgs/images.png" alt="Capa do Guia de Ordenamento do Território" loading="lazy">
+          <div class="doc-body">
+            <h3><a href="../docs/1.pdf" download="1.pdf">Título do documento 1</a></h3>
+            <p>Descrição 1.</p>
+          </div>
+        </article>
+
+        <article class="doc-card">
+          <img class="doc-thumb" src="../imgs/images.png" alt="Capa do segundo documento" loading="lazy">
+          <div class="doc-body">
+            <h3><a href="../docs/2.pdf" download="2.pdf">Título do documento 2</a></h3>
+            <p>Descriçã 2.</p>
+          </div>
+        </article>
+
+        <!-- copiar o <article> acima para cada novo documento -->
+      </div>
+    </section>
+  </main>
+
+  <script src="../js/catalog-data.js"></script>
+  <script src="../js/indicator-values.js"></script>
+  <script src="../js/map-data.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/powerbi-config.js"></script>
+  <script src="../js/powerbi-embed.js"></script>
+</body>
+</html>
