@@ -16,17 +16,6 @@
 .region-map .municipality-node:hover path { fill: var(--river); }
 
 /* Modal "Leitura do indicador" */
-.ind-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(21,59,50,.55); }
-.ind-modal[hidden] { display: none; }
-.ind-dialog { width: min(640px, 100%); max-height: 90vh; overflow: auto; background: #fff; border-radius: 22px; padding: 30px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
-.ind-dialog .overline { margin: 0; }
-.ind-dialog h2 { margin: 0; font-size: 32px; line-height: 1.1; color: var(--forest); }
-.ind-dialog dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.ind-dialog dt { font-size: 12px; color: var(--muted); }
-.ind-dialog dd { margin: 4px 0 0; font-size: 15px; font-weight: 500; }
-.ind-dialog dd a { color: var(--forest-2); }
-.ind-dialog .full { grid-column: 1 / -1; }
-.ind-close { align-self: flex-start; min-height: 44px; padding: 0 24px; border: 0; border-radius: 999px; background: var(--forest); color: var(--lime); font-weight: 600; cursor: pointer; }
 
 /* Página de município */
 .mun-main { position: relative; overflow: hidden; background: var(--forest); color: #fff; min-height: 100vh; }
@@ -55,7 +44,6 @@
 .mun-card .v small { font-size: 13px; color: var(--muted); }
 .mun-card .c { margin-top: auto; font-size: 13px; font-weight: 500; color: var(--forest-2); }
 .mun-note { margin: 0; font-size: 12px; color: #b7d0c7; }
-@media (max-width: 760px) { .mun-cards { grid-template-columns: 1fr; } .ind-dialog dl { grid-template-columns: 1fr; } }
 
 .page-intro p, .subpage-toolbar p:not(.overline) { margin: 12px 0 0; max-width: 760px; font-size: 17px; line-height: 1.55; color: var(--muted); }
 .mun-bg, .mun-ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }

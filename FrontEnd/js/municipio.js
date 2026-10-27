@@ -1,4 +1,4 @@
-// Complemento visual: cartão/chips do Retrato, modal de indicadores e páginas de município.
+// Funcionalidades específicas do Retrato e das páginas de município.
 (function () {
   const page = document.body.dataset.page;
   const slug = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -33,30 +33,6 @@
     g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") go(); });
   });
 
-  // ---------- Modal "Leitura do indicador" ----------
-  if (page === "indicadores") {
-    const m = document.createElement("div");
-    m.className = "ind-modal"; m.hidden = true;
-    m.innerHTML = '<div class="ind-dialog" role="dialog" aria-modal="true" aria-labelledby="im-name"><p class="overline" id="im-cat"></p><h2 id="im-name"></h2><dl><div><dt>Ano do dado mais recente</dt><dd id="im-year"></dd></div><div><dt id="im-tdt"></dt><dd id="im-val"></dd></div><div><dt>Fonte</dt><dd><a id="im-src" target="_blank" rel="noopener"></a></dd></div><div class="full"><dt>Leitura do indicador</dt><dd id="im-read"></dd></div></dl><button type="button" class="ind-close">Fechar</button></div>';
-    document.body.appendChild(m);
-    const close = () => { m.hidden = true; };
-    const open = () => {
-      const it = catalog.find(x => x.key === selectedIndicatorKey) || catalog[0], $ = id => document.getElementById(id);
-      $("im-cat").textContent = it.area; $("im-name").textContent = it.name; $("im-year").textContent = it.year || "—";
-      $("im-tdt").textContent = "Valor · " + selectedTerritory; $("im-val").textContent = formattedValue(it, it.values?.[selectedTerritory]);
-      $("im-src").textContent = it.source + " ↗"; $("im-src").href = it.sourceUrl || "#";
-      $("im-read").textContent = [it.dimension, it.description].filter(Boolean).join(". ");
-      m.hidden = false; m.querySelector(".ind-close").focus();
-    };
-    m.addEventListener("click", e => { if (e.target === m || e.target.closest(".ind-close")) close(); });
-    document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
-    const body = document.getElementById("catalog-body");
-    if (body) {
-      body.addEventListener("click", e => { if (e.target.closest(".catalog-row")) open(); });
-      body.addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.closest(".catalog-row")) open(); });
-    }
-  }
-
   // ---------- Página de município ----------
   const PAL = {
     "arcos-de-valdevez": ["mountain", 60, ["#a7d3ea", "#f3efd6", "#7ea58c", "#4c8466", "#2b5d45", "#fff6cf", 1080, 200]],
@@ -80,13 +56,40 @@
     return g;
   }
   function firstYear(ds, t) { return Object.keys(ds.history || {}).filter(y => ds.history[y][t] != null).sort()[0]; }
+
+  // ---------- Imagens dos municípios ----------
+  const imagensMunicipios = {
+    "arcos-de-valdevez": "RioVezArcosdeValdevez.jpg",
+    "caminha": "IgrejaCaminha.jpg",
+    "melgaco": "melgaco.jpg",
+    "moncao": "moncao.jpg",
+    "paredes-de-coura": "paredes-de-coura.jpg",
+    "ponte-da-barca": "ponte-da-barca.jpg",
+    "ponte-de-lima": "ponte-de-lima.jpg",
+    "valenca": "valenca.jpg",
+    "viana-do-castelo": "viana-do-castelo.jpg",
+    "vila-nova-de-cerveira": "vila-nova-de-cerveira.jpg"
+  };
+
+  const pastaImagens = "../imgs/municipios/";
+
+  function obterImagemMunicipio(nome) {
+    const ficheiro = imagensMunicipios[slug(nome)];
+    return ficheiro ? pastaImagens + ficheiro : "";
+  }
+
   function renderMun() {
     const root = document.getElementById("mun-root"); if (!root) return;
     const q = new URLSearchParams(location.search).get("m");
     let name = MUNS.find(n => slug(n) === q) || (MUNS.includes(selectedTerritory) ? selectedTerritory : "Ponte de Lima");
     const s = slug(name);
+
+    const imagemMunicipio = obterImagemMunicipio(name);
+
     if (select) select.value = name;
     document.title = name + " | Observatório Alto Minho";
+
+    
     const specs = [
       ["População residente", POP, 0, "hab.", "rel"], ["Densidade populacional", DEN, 1, "hab./km²", "rel"],
       ["Taxa bruta de natalidade", "Taxa bruta de natalidade", 1, "‰", "abs:pp"], ["Índice de envelhecimento", "Índice de envelhecimento", 1, "idosos por 100 jovens", "rel"],
@@ -100,10 +103,10 @@
       if (o != null && o !== 0) { const diff = mode === "rel" ? (v - o) / o * 100 : v - o; up = diff >= 0; ch = sg(diff) + f(Math.abs(diff), 1) + (mode === "rel" ? " %" : " " + mode.split(":")[1]) + " desde " + y0; }
       return `<article class="mun-card"><div><span class="l">${label}</span><span class="y">${ds.year}</span></div><div class="v"><b>${f(v, d)}</b><small>${unit}</small></div><div class="c">${o != null ? (up ? "▲ " : "▼ ") : ""}${ch}</div></article>`;
     }).join("");
-    root.innerHTML = `<svg class="mun-scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${scene(s, "sky1")}</svg><img class="mun-bg" src="../imgs/municipios/${s}.jpg" alt="" onerror="this.remove()"><div class="mun-shade"></div>
+    root.innerHTML = `<svg class="mun-scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${scene(s, "sky1")}</svg><img class="mun-bg" src="${imagemMunicipio}" alt="" onerror="this.remove()"><div class="mun-shade"></div>
       <div class="mun-body"><a class="mun-back" href="${homeUrl}"><span aria-hidden="true">←</span>Voltar ao mapa</a>
       <header class="mun-head"><p class="overline">Município · Alto Minho</p><h1 class="${name.length > 16 ? "long" : ""}">${name}</h1><p>Retrato estatístico do município no contexto da NUTS III Alto Minho: demografia, poder de compra e emprego.</p></header>
-      <section class="mun-grid"><figure class="mun-photo"><div><svg viewBox="240 260 860 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Imagem em destaque (placeholder)">${scene(s, "sky2")}</svg><img class="mun-ph" src="../imgs/municipios/${s}.jpg" alt="${name}" onerror="this.remove()" onload="this.parentNode.querySelector('span').remove()"><span>Foto em destaque · placeholder</span></div><figcaption>Substituir por fotografia de ${name}.</figcaption></figure><div class="mun-cards">${cards}</div></section>
+      <section class="mun-grid"><figure class="mun-photo"><div><svg viewBox="240 260 860 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Imagem em destaque (placeholder)">${scene(s, "sky2")}</svg><img class="mun-ph" src="${imagemMunicipio}" alt="${name}" onerror="this.remove()" onload="this.parentNode.querySelector('span').remove()"><span>Foto em destaque · placeholder</span></div><figcaption>Substituir por fotografia de ${name}.</figcaption></figure><div class="mun-cards">${cards}</div></section>
       <p class="mun-note">Fonte: PORDATA · INE. Variação face ao primeiro ano da série disponível.</p></div>`;
   }
 
