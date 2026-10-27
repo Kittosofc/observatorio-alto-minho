@@ -147,7 +147,7 @@ function renderComparison(){
 // Página Comparar: gráfico de barras agrupadas que compara os anos de um indicador (do mais antigo ao mais recente),
 // com um grupo por município. Só aparece nos indicadores com pelo menos 2 anos de dados.
 // O município escolhido no menu lateral fica destacado.
-const yearColors=["#9fb3ab","#70c6df","#ef7056","#153b32"]; // do ano mais antigo ao mais recente
+const yearColors=["#b7d3ee","#bfe0c7","#f6dd94","#ef9a93"]; // do ano mais antigo ao mais recente
 // Passo "redondo" (1, 2, 5 × 10ⁿ) para as linhas de referência do eixo.
 const niceStep=range=>{const raw=range/4,power=10**Math.floor(Math.log10(raw)),n=raw/power;return(n<=1?1:n<=2?2:n<=5?5:10)*power;};
 
