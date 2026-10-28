@@ -1,3 +1,4 @@
+/* Página Indicadores */
 /* Estilos exclusivos da página Indicadores. */
 .ind-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(21,59,50,.55); }
 .ind-modal[hidden] { display: none; }

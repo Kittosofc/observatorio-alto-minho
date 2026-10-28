@@ -1,0 +1,15 @@
+/* Base comum às páginas Comparar, Metodologia e Documentos */
+/* Comparar, Metodologia e Documentos — mesmo estilo do Retrato */
+body[data-page="comparar"] main, body[data-page="metodologia"] main, body[data-page="transferencias"] main { background: var(--paper); }
+body[data-page="comparar"] .page-workspace, body[data-page="metodologia"] .page-workspace, body[data-page="transferencias"] .page-workspace { padding-top: 52px; padding-bottom: 80px; }
+.page-intro p:not(.overline) { margin: 12px 0 0; max-width: 760px; font-size: 17px; line-height: 1.55; color: var(--muted); }
+.page-intro { margin-bottom: 32px; }
+.page-intro h1 { margin-bottom: 0; }
+
+.card { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 26px 28px; margin-bottom: 24px; }
+.card-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.card-head .overline { margin-bottom: 8px; }
+.card-head h2 { margin: 0; font-size: clamp(26px, 3vw, 38px); line-height: 1.05; color: var(--forest); }
+.card .compare-control { width: 300px; max-width: 100%; color: var(--muted); font-size: 12px; }
+.card .compare-control select { margin-top: 8px; border-bottom: 1px solid var(--line); color: var(--forest); }
+

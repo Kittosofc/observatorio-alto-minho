@@ -9,10 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="./FrontEnd/css/municipio.css">
+  <!-- Estilos globais -->
+  <link rel="stylesheet" href="./FrontEnd/css/shared/global.css">
+  <!-- Estilos da página -->
+  <link rel="stylesheet" href="./FrontEnd/css/pages/index.css">
 </head>
 <body data-page="retrato">
+  <!-- Cabeçalho e navegação -->
   <header class="rail">
     <a class="brand" href="./index.html" aria-label="Observatório Alto Minho — início">
       <span class="brand-symbol" aria-hidden="true"><img src="./FrontEnd/imgs/cim-alto-minho.svg" alt=""></span>
@@ -36,6 +39,7 @@
     </div>
   </header>
 
+  <!-- Conteúdo principal -->
   <main id="top">
     <section class="workspace" id="retrato">
       <div class="page-intro">
@@ -64,24 +68,21 @@
           </svg>
           <div class="map-key"><span></span> Município ativo <small>Limites: CAOP · DGT</small></div>
         </section>
-
-        <section class="metric-panel" aria-label="Indicadores de síntese">
-          <div class="metric-heading">
-            <p>Indicadores de síntese</p>
-            <span>Último ano disponível</span>
-          </div>
-          <div class="kpis" id="kpi-grid" aria-live="polite"></div>
-        </section>
       </div>
 
     </section>
   </main>
-  <script src="./FrontEnd/js/catalog-data.js"></script>
-  <script src="./FrontEnd/js/indicator-values.js"></script>
-  <script src="./FrontEnd/js/map-data.js"></script>
-  <script src="./app.js"></script>
-  <script src="./FrontEnd/js/municipio.js"></script>
-  <script src="./FrontEnd/js/powerbi-config.js"></script>
-  <script src="./FrontEnd/js/powerbi-embed.js"></script>
+  <!-- Dados gerados -->
+  <script src="./FrontEnd/js/data/catalog-data.js"></script>
+  <script src="./FrontEnd/js/data/indicator-values.js"></script>
+  <script src="./FrontEnd/js/data/map-data.js"></script>
+  <!-- Núcleo partilhado -->
+  <script src="./FrontEnd/js/shared/app.js"></script>
+  <!-- Lógica da página -->
+  <script src="./FrontEnd/js/pages/municipio.js"></script>
+  <script src="./FrontEnd/js/pages/index.js"></script>
+  <!-- Power BI -->
+  <script src="./FrontEnd/js/shared/powerbi-config.js"></script>
+  <script src="./FrontEnd/js/shared/powerbi-embed.js"></script>
 </body>
 </html>

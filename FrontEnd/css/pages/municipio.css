@@ -1,3 +1,4 @@
+/* Retrato (index) e páginas de município */
 /* Complemento visual (Retrato, modal de indicadores, páginas de município) */
 .pick-row { display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch; margin-top: 24px; }
 .sel-card { flex: 1 1 340px; max-width: 460px; background: var(--forest); color: #fff; border-radius: 22px; padding: 26px; display: flex; flex-direction: column; gap: 18px; }

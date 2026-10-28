@@ -1,3 +1,4 @@
+/* Estilos globais e componentes comuns a todas as páginas */
 :root {
   --forest: #2f4468;
   --forest-2: #4a78b0;
@@ -108,13 +109,13 @@ body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .territory-title-row > p { margin-bottom: 7px; color: var(--muted); font-size: 12px; }
 .territory-title-row i { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--forest-2); }
 
-.territory-stage { display: grid; grid-template-columns: minmax(330px, .9fr) 1.1fr; min-height: 550px; border: 1px solid var(--line); background: white; }
+.territory-stage { display: grid; grid-template-columns: 1fr; min-height: 550px; border: 1px solid var(--line); background: white; }
 .map-panel { position: relative; overflow: hidden; padding: 24px; background: #f6efd6; }
 .map-panel::after { content: ""; position: absolute; width: 310px; height: 310px; right: -180px; bottom: -170px; border: 70px solid rgba(168,124,16,.07); border-radius: 50%; }
 .map-caption { display: flex; justify-content: space-between; gap: 20px; position: relative; z-index: 2; }
 .map-caption span { font-family: "Source Serif 4", Georgia, serif; font-size: 23px; }
 .map-caption p { max-width: 170px; color: var(--muted); font-size: 12px; line-height: 1.45; }
-.region-map { position: relative; z-index: 2; display: block; width: 100%; height: 420px; margin-top: 2px; overflow: visible; }
+.region-map { position: relative; z-index: 2; display: block; width: 100%; height: 680px; margin-top: 2px; overflow: visible; }
 .municipality-node { cursor: pointer; outline: none; }
 .municipality-node path { fill: #a9c8ea; stroke: #fff; stroke-width: 2.2; vector-effect: non-scaling-stroke; transition: fill .18s ease, filter .18s ease; }
 .municipality-node:hover path, .municipality-node:focus path { filter: brightness(.94) drop-shadow(0 3px 3px rgba(47,68,104,.18)); }
@@ -216,7 +217,7 @@ td:last-child { color: var(--forest-2); font-weight: 600; }
 @media (max-width: 1080px) {
   :root { --rail: 210px; }
   .territory-stage { grid-template-columns: 1fr; }
-  .region-map { height: 360px; }
+  .region-map { height: 520px; }
   .themes { grid-template-columns: 48px 1fr; }
   .theme-tabs { grid-column: 2; justify-content: flex-start; }
   .theme-overview { grid-template-columns: 1fr; }
@@ -263,7 +264,7 @@ td:last-child { color: var(--forest-2); font-weight: 600; }
   .brand small, .source-link { display: none; }
   .page-intro h1 { font-size: 42px; }
   .map-panel { padding: 18px; }
-  .region-map { height: 330px; }
+  .region-map { height: 420px; }
   .map-caption { display: block; }
   .indicator { grid-template-columns: 100px 1fr; }
   .indicator small { grid-column: 2; margin-top: 4px; }
@@ -271,70 +272,6 @@ td:last-child { color: var(--forest-2); font-weight: 600; }
   .detail-meta { flex-wrap: wrap; gap: 18px; }
 }
 
-
-/* ===== Página Indicadores: layout compacto (menos scroll) =====
-   Tudo limitado a body[data-page="indicadores"] para não afetar as outras páginas. */
-body[data-page="indicadores"] .workspace { padding-top: 28px; padding-bottom: 40px; }
-body[data-page="indicadores"] .subpage-toolbar { padding: 0 0 22px; }
-body[data-page="indicadores"] .catalog-section { padding: 26px 0 0; }
-body[data-page="indicadores"] .section-index { font-size: 34px; }
-body[data-page="indicadores"] .section-copy h2,
-body[data-page="indicadores"] .catalog-head h2 { font-size: clamp(26px, 2.8vw, 36px); }
-body[data-page="indicadores"] .overline { margin-bottom: 8px; }
-
-/* Painel do indicador selecionado */
-body[data-page="indicadores"] .indicator-detail { gap: 14px 42px; margin-top: 20px; padding: 18px 24px; }
-body[data-page="indicadores"] .detail-copy h3 { font-size: clamp(24px, 2.4vw, 32px); }
-body[data-page="indicadores"] .detail-value strong { font-size: clamp(30px, 3.2vw, 42px); }
-
-/* Separadores de área */
-body[data-page="indicadores"] .themes { padding: 20px 0 14px; }
-@media (min-width: 1081px) {
-  body[data-page="indicadores"] .themes { grid-template-columns: 56px 340px 1fr; }
-}
-
-/* Cartões da área escolhida */
-body[data-page="indicadores"] .theme-overview { gap: 40px; padding: 22px 0 26px; }
-body[data-page="indicadores"] .overview-copy h2 { font-size: clamp(28px, 3vw, 40px); }
-body[data-page="indicadores"] .overview-copy h2 { margin-bottom: 12px; }
-body[data-page="indicadores"] .indicator { min-height: 56px; }
-body[data-page="indicadores"] .indicator strong { font-size: 26px; }
-
-/* Tabela: cabeçalho fixo e scroll só dentro da tabela (em vez de alongar a página) */
-body[data-page="indicadores"] .catalog-table-wrap { max-height: 340px; margin-top: 12px; overflow: auto; }
-body[data-page="indicadores"] th { position: sticky; top: 0; z-index: 1; padding: 10px 12px; background: var(--paper); box-shadow: 0 1px 0 var(--line); }
-body[data-page="indicadores"] td { padding: 9px 12px; }
-
-/* Mantém áreas e catálogo numa sequência de leitura clara em qualquer largura. */
-body[data-page="indicadores"] .catalog-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
-body[data-page="indicadores"] .catalog-col { min-width: 0; }
-body[data-page="indicadores"] #catalog-caption { margin: 22px 0 0; }
-@media (min-width: 1280px) {
-  body[data-page="indicadores"] table { min-width: 0; }
-  body[data-page="indicadores"] td, body[data-page="indicadores"] th { padding-left: 8px; padding-right: 8px; }
-  body[data-page="indicadores"] td { font-size: 13px; }
-}
-
-body[data-page="indicadores"] .themes { grid-template-columns: 48px minmax(0, 1fr); }
-body[data-page="indicadores"] .theme-tabs { grid-column: 1 / -1; justify-content: flex-start; }
-body[data-page="indicadores"] .indicator-detail { grid-template-columns: minmax(0, 1fr) minmax(190px, .45fr); }
-body[data-page="indicadores"] .detail-meta,
-body[data-page="indicadores"] .detail-action { grid-column: 1 / -1; }
-body[data-page="indicadores"] .detail-meta { flex-wrap: wrap; gap: 14px 28px; }
-body[data-page="indicadores"] .detail-action { justify-self: end; }
-body[data-page="indicadores"] .catalog-table-wrap { max-height: min(48vh, 460px); }
-
-@media (min-width: 761px) and (max-width: 1080px) {
-  body[data-page="indicadores"] .catalog-head { grid-template-columns: 48px minmax(0, 1fr); gap: 12px 24px; }
-  body[data-page="indicadores"] .search-control { grid-column: 2; }
-  body[data-page="indicadores"] .indicator-detail { grid-template-columns: minmax(0, 1fr) auto; }
-  body[data-page="indicadores"] .detail-value { text-align: left; }
-}
-
-@media (max-width: 760px) {
-  body[data-page="indicadores"] .indicator-detail { grid-template-columns: minmax(0, 1fr); }
-  body[data-page="indicadores"] .detail-value { text-align: left; }
-}
 
 /* Página Comparar: gráfico de comparação entre anos */
 .history-section { margin: 64px 0 0 80px; }

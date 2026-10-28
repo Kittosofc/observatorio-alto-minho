@@ -19,8 +19,8 @@ from openpyxl import load_workbook
 
 
 ROOT = Path(__file__).resolve().parents[1]
-VALUES_PATH = ROOT / "FrontEnd" / "js" / "indicator-values.js"
-CATALOG_PATH = ROOT / "FrontEnd" / "js" / "catalog-data.js"
+VALUES_PATH = ROOT / "FrontEnd" / "js" / "data" / "indicator-values.js"
+CATALOG_PATH = ROOT / "FrontEnd" / "js" / "data" / "catalog-data.js"
 PORDATA_SOURCES_PATH = ROOT / "data" / "pordata-sources.json"
 PORDATA_DIRECTORY = ROOT / ".cache" / "pordata"
 REPORT_PATH = ROOT / "data" / "update-report.json"

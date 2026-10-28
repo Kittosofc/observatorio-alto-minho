@@ -2,7 +2,7 @@
  * Observatório Alto Minho — núcleo partilhado da aplicação.
  * Responsabilidades: catálogo de indicadores, território selecionado,
  * renderização comum e eventos reutilizados pelas páginas.
- * Funcionalidades exclusivas de cada página vivem em FrontEnd/js/.
+ * Funcionalidades exclusivas de cada página vivem em FrontEnd/js/pages/.
  */
 // ===== 1. DADOS DE BASE =====
 // Lista dos territórios: o total do Alto Minho + os 10 municípios (é o que aparece no <select>).

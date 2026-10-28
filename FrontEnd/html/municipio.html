@@ -9,10 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../style.css">
-  <link rel="stylesheet" href="../css/municipio.css">
+  <!-- Estilos globais -->
+  <link rel="stylesheet" href="../css/shared/global.css">
+  <!-- Estilos da página -->
+  <link rel="stylesheet" href="../css/pages/municipio.css">
 </head>
 <body data-page="municipio">
+  <!-- Cabeçalho e navegação -->
   <header class="rail">
     <a class="brand" href="../../index.html" aria-label="Observatório Alto Minho — início">
       <span class="brand-symbol" aria-hidden="true"><img src="../imgs/cim-alto-minho.svg" alt=""></span>
@@ -36,13 +39,18 @@
     </div>
   </header>
 
+  <!-- Conteúdo principal -->
   <main id="top" class="mun-main"><div id="mun-root"></div></main>
-  <script src="../js/catalog-data.js"></script>
-  <script src="../js/indicator-values.js"></script>
-  <script src="../js/map-data.js"></script>
-  <script src="../../app.js"></script>
-  <script src="../js/municipio.js"></script>
-  <script src="../js/powerbi-config.js"></script>
-  <script src="../js/powerbi-embed.js"></script>
+  <!-- Dados gerados -->
+  <script src="../js/data/catalog-data.js"></script>
+  <script src="../js/data/indicator-values.js"></script>
+  <script src="../js/data/map-data.js"></script>
+  <!-- Núcleo partilhado -->
+  <script src="../js/shared/app.js"></script>
+  <!-- Lógica da página -->
+  <script src="../js/pages/municipio.js"></script>
+  <!-- Power BI -->
+  <script src="../js/shared/powerbi-config.js"></script>
+  <script src="../js/shared/powerbi-embed.js"></script>
 </body>
 </html>
