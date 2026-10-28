@@ -43,7 +43,8 @@ const areaByDomain = {
 const emprego = ["Desempregados inscritos nos centros de emprego e de formação profissional no total da população residente com 15 a 64 anos (%)",
   "Diferença entre o salário mínimo nacional e a remuneração base média mensal dos trabalhadores por conta de outrem",
   "Desempregados inscritos nos centros de emprego e de formação profissional (média anual): total e por grupo etário",
-  "Desempregados inscritos nos centros de emprego e de formação profissional", "Rendimento médio", "Diferença salarial H/M (%)"];
+  "Desempregados inscritos nos centros de emprego e de formação profissional", "Rendimento médio", "Diferença salarial H/M (%)",
+  "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo"];
 const educacao = ["Taxa de retenção e desistência no ensino básico: total e por ano de escolaridade",
   "Taxa de retenção e desistência no ensino secundário: total, por modalidade de ensino e ano de escolaridade",
   "Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino", "Taxa de analfabetismo"];
