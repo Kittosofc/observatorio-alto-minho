@@ -65,6 +65,7 @@ PORDATA_FIXED_POSITIONS.update({
     _GANHO: _PF,
     _RSI: _PF,
     _ESTR: _PF,
+    "Saldo Total": _PF,
 })
 PORDATA_FIXED_ENTRIES = {
     _ENSINO: {"unit": "estabelecimentos", "dimension": "Soma dos 5 níveis de ensino (cada estabelecimento conta uma vez por cada ensino que ministra)", "prefix": "", "suffix": ""},
@@ -80,6 +81,8 @@ PORDATA_FIXED_ENTRIES = {
            "catalog": ("Proteção Social", "Acesso", "Cuidados")},
     _ESTR: {"unit": "pessoas", "dimension": "Total", "prefix": "", "suffix": "",
             "catalog": ("Proteção Social", "População imigrante", "População imigrante")},
+    "Saldo Total": {"unit": "pessoas", "dimension": "Saldo total anual (saldo natural + saldo migratório)", "prefix": "", "suffix": "",
+                    "catalog": ("Demografia", "Dinâmica populacional", "Distribuição da população")},
 }
 
 INE_DIRECT = {

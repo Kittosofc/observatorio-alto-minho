@@ -59,16 +59,16 @@
 
   // ---------- Imagens dos municípios ----------
   const imagensMunicipios = {
-    "arcos-de-valdevez": "RioVezArcosdeValdevez.jpg",
-    "caminha": "IgrejaCaminha.jpg",
-    "melgaco": "melgaco.jpg",
-    "moncao": "moncao.jpg",
-    "paredes-de-coura": "paredes-de-coura.jpg",
-    "ponte-da-barca": "ponte-da-barca.jpg",
-    "ponte-de-lima": "ponte-de-lima.jpg",
-    "valenca": "valenca.jpg",
-    "viana-do-castelo": "viana-do-castelo.jpg",
-    "vila-nova-de-cerveira": "vila-nova-de-cerveira.jpg"
+    "arcos-de-valdevez": "ArcosDeValdevez.jpg",
+    "caminha": "Caminha.jpg",
+    "melgaco": "Melgaco.jpg",
+    "moncao": "Moncao.jpg",
+    "paredes-de-coura": "ParedesDeCoura.jpg",
+    "ponte-da-barca": "PonteDaBarca.jpg",
+    "ponte-de-lima": "PonteDeLima.jpg",
+    "valenca": "Valenca.jpg",
+    "viana-do-castelo": "VianaDoCastelo.jpg",
+    "vila-nova-de-cerveira": "VilaNovaCerveira.jpg"
   };
 
   const pastaImagens = "../imgs/municipios/";
@@ -90,24 +90,21 @@
     document.title = name + " | Observatório Alto Minho";
 
     
+    const SN = "Saldo Natural", SM = "Saldo Migratório";
     const specs = [
-      ["População residente", POP, 0, "hab.", "rel"], ["Densidade populacional", DEN, 1, "hab./km²", "rel"],
-      ["Taxa bruta de natalidade", "Taxa bruta de natalidade", 1, "‰", "abs:pp"], ["Índice de envelhecimento", "Índice de envelhecimento", 1, "idosos por 100 jovens", "rel"],
-      ["Poder de compra per capita", "Poder de compra per capita", 1, "índice", "abs:pontos"],
-      ["Desempregados inscritos", "Desempregados inscritos nos centros de emprego e de formação profissional no total da população residente com 15 a 64 anos (%)", 1, "% da pop. 15–64", "abs:pp"]
+      { label: "População residente", ds: DS(POP), v: DS(POP).values[name], d: 0, unit: "hab." },
+      { label: "Taxa bruta de natalidade", ds: DS("Taxa bruta de natalidade"), v: DS("Taxa bruta de natalidade").values[name], d: 1, unit: "‰" },
+      { label: "Saldo total", ds: DS("Saldo Total") || DS(SN), v: DS("Saldo Total") ? DS("Saldo Total").values[name] : DS(SN).values[name] + DS(SM).values[name], d: 0, unit: "pessoas", sign: true },
+      { label: "Poder de compra per capita", ds: DS("Poder de compra per capita"), v: DS("Poder de compra per capita").values[name], d: 1, unit: "%" },
+      { label: "Crimes registados", ds: DS("Crimes registados pelas polícias por mil habitantes"), v: DS("Crimes registados pelas polícias por mil habitantes").values[name], d: 1, unit: "‰ habitantes" },
+      { label: "Habitantes por médico", ds: DS("Habitantes por médico e farmacêutico"), v: DS("Habitantes por médico e farmacêutico").values[name], d: 1, unit: "hab. por médico" }
     ];
-    const sg = v => v > 0 ? "+" : v < 0 ? "−" : "";
-    const cards = specs.map(([label, key, d, unit, mode]) => {
-      const ds = DS(key), v = ds.values[name], y0 = firstYear(ds, name), o = y0 && y0 !== ds.year ? ds.history[y0][name] : null;
-      let ch = "Sem série histórica", up = true;
-      if (o != null && o !== 0) { const diff = mode === "rel" ? (v - o) / o * 100 : v - o; up = diff >= 0; ch = sg(diff) + f(Math.abs(diff), 1) + (mode === "rel" ? " %" : " " + mode.split(":")[1]) + " desde " + y0; }
-      return `<article class="mun-card"><div><span class="l">${label}</span><span class="y">${ds.year}</span></div><div class="v"><b>${f(v, d)}</b><small>${unit}</small></div><div class="c">${o != null ? (up ? "▲ " : "▼ ") : ""}${ch}</div></article>`;
-    }).join("");
+    const cards = specs.map(({ label, ds, v, d, unit, sign }) => `<article class="mun-card"><div><span class="l">${label}</span><span class="y">${ds.year}</span></div><div class="v"><b>${sign && v > 0 ? "+" : ""}${f(v, d)}</b><small>${unit}</small></div></article>`).join("");
     root.innerHTML = `<svg class="mun-scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${scene(s, "sky1")}</svg><img class="mun-bg" src="${imagemMunicipio}" alt="" onerror="this.remove()"><div class="mun-shade"></div>
       <div class="mun-body"><a class="mun-back" href="${homeUrl}"><span aria-hidden="true">←</span>Voltar ao mapa</a>
-      <header class="mun-head"><p class="overline">Município · Alto Minho</p><h1 class="${name.length > 16 ? "long" : ""}">${name}</h1><p>Retrato estatístico do município no contexto da NUTS III Alto Minho: demografia, poder de compra e emprego.</p></header>
-      <section class="mun-grid"><figure class="mun-photo"><div><svg viewBox="240 260 860 560" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Imagem em destaque (placeholder)">${scene(s, "sky2")}</svg><img class="mun-ph" src="${imagemMunicipio}" alt="${name}" onerror="this.remove()" onload="this.parentNode.querySelector('span').remove()"><span>Foto em destaque · placeholder</span></div><figcaption>Substituir por fotografia de ${name}.</figcaption></figure><div class="mun-cards">${cards}</div></section>
-      <p class="mun-note">Fonte: PORDATA · INE. Variação face ao primeiro ano da série disponível.</p></div>`;
+      <header class="mun-head"><p class="overline">Município · Alto Minho</p><h1 class="${name.length > 16 ? "long" : ""}">${name}</h1><p>Retrato estatístico do município no contexto da NUTS III Alto Minho: população, natalidade, poder de compra, segurança e saúde.</p></header>
+      <section class="mun-grid"><div class="mun-cards">${cards}</div></section>
+      <p class="mun-note">Fonte: PORDATA · INE.</p></div>`;
   }
 
   // ---------- Ligação ao território ativo ----------

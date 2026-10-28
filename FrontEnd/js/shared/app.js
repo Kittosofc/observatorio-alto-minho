@@ -47,7 +47,7 @@ const emprego = ["Desempregados inscritos nos centros de emprego e de formação
   "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo"];
 const educacao = ["Taxa de retenção e desistência no ensino básico: total e por ano de escolaridade",
   "Taxa de retenção e desistência no ensino secundário: total, por modalidade de ensino e ano de escolaridade",
-  "Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino", "Taxa de analfabetismo"];
+  "Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino"];
 const areaByName = { ...Object.fromEntries(emprego.map(n => [n, "Emprego"])), ...Object.fromEntries(educacao.map(n => [n, "Educação"])) };
 // Separador onde o indicador aparece ("Outros" se não encaixar em nenhum).
 const tabOf = item => areaByName[item.name] || areaByDomain[item.domain] || "Outros";
@@ -69,7 +69,7 @@ const catalog = indicatorCatalog.map((item, index) => {
 const legacyNames = {
   population:"População residente: total 2015 a 2025", ageing:"Índice de envelhecimento", housing:"Preço médio m²",
   migration:"Saldo Migratório", unemployment:"Desempregados inscritos nos centros de emprego e de formação profissional no total da população residente com 15 a 64 anos (%)",
-  income:"Rendimento médio", illiteracy:"Taxa de analfabetismo", doctors:"Profissionais de saúde: médicos, dentistas, enfermeiros e farmacêuticos",
+  income:"Rendimento médio", secondary:"Taxa de retenção e desistência no ensino secundário: total, por modalidade de ensino e ano de escolaridade", doctors:"Profissionais de saúde: médicos, dentistas, enfermeiros e farmacêuticos",
   rsi:"Beneficiários do Rendimento Mínimo Garantido e Rendimento Social de Inserção da Segurança Social: total e por sexo",
   foreign:"População estrangeira com estatuto legal de residente: total e por algumas nacionalidades", youth:"Índice de dependência de jovens",
   elderly:"Índice de dependência idosos", commuting:"Proporção de pop. residente em movimentos pendulares"
@@ -92,7 +92,7 @@ const themes = {
   "Demografia": { title:"Estrutura e dinâmica da população", description:"Leia a evolução demográfica e compare o território com o Alto Minho.", cards:d => [card(d.ageing,"Índice de envelhecimento",legacyNames.ageing),card(d.migration,"Saldo migratório",legacyNames.migration),card(d.youth,"Índice de dependência de jovens",legacyNames.youth),card(d.elderly,"Índice de dependência de idosos",legacyNames.elderly)] },
   "Habitação": { title:"Acesso e condições de habitação", description:"Acompanhe preços e dinâmica residencial no território.", cards:d => [card(d.housing,"Preço médio por m²",legacyNames.housing),card(d.population,"População residente",legacyNames.population),card(d.migration,"Saldo migratório",legacyNames.migration),card(d.income,"Ganho médio mensal",legacyNames.income)] },
   "Emprego": { title:"Trabalho, rendimento e atividade", description:"Compare emprego e rendimentos no contexto intermunicipal.", cards:d => [card(d.unemployment,"Desempregados na população ativa (%)",legacyNames.unemployment),card(d.income,"Ganho médio mensal",legacyNames.income),card(d.commuting,"Movimentos pendulares (%)",legacyNames.commuting),card(d.foreign,"População estrangeira residente",legacyNames.foreign)] },
-  "Educação": { title:"Qualificações e sucesso educativo", description:"Observe escolaridade, analfabetismo e condições de qualificação.", cards:d => [card(d.illiteracy,"Taxa de analfabetismo (%)",legacyNames.illiteracy),card(byRawName("Taxa de retenção e desistência no ensino básico: total e por ano de escolaridade").values[selectedTerritory],"Retenção no ensino básico (%)","Taxa de retenção e desistência no ensino básico: total e por ano de escolaridade"),card(byRawName("Taxa de retenção e desistência no ensino secundário: total, por modalidade de ensino e ano de escolaridade").values[selectedTerritory],"Retenção no secundário (%)","Taxa de retenção e desistência no ensino secundário: total, por modalidade de ensino e ano de escolaridade"),card(byRawName("Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino").values[selectedTerritory],"Estabelecimentos de ensino","Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino")] },
+  "Educação": { title:"Qualificações e sucesso educativo", description:"Observe retenção, desistência e condições de qualificação.", cards:d => [card(d.secondary,"Retenção e desistência no secundário (%)",legacyNames.secondary),card(byRawName("Taxa de retenção e desistência no ensino básico: total e por ano de escolaridade").values[selectedTerritory],"Retenção e desistência no básico (%)","Taxa de retenção e desistência no ensino básico: total e por ano de escolaridade"),card(byRawName("Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino").values[selectedTerritory],"Estabelecimentos de ensino","Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino")] },
   "Saúde": { title:"Acesso a cuidados de saúde", description:"Acompanhe a disponibilidade de profissionais e a pressão demográfica.", cards:d => [card(d.doctors,"Profissionais de saúde",legacyNames.doctors),card(byRawName("Habitantes por médico e farmacêutico").values[selectedTerritory],"Habitantes por médico","Habitantes por médico e farmacêutico"),card(byRawName("Habitantes por farmácia e posto farmacêutico móvel").values[selectedTerritory],"Habitantes por farmácia","Habitantes por farmácia e posto farmacêutico móvel"),card(d.elderly,"Dependência de idosos",legacyNames.elderly)] },
   "Coesão social": { title:"Proteção e inclusão social", description:"Identifique necessidades sociais e apoie a distribuição de recursos.", cards:d => [card(d.rsi,"Beneficiários de RSI",legacyNames.rsi),card(d.foreign,"População estrangeira residente",legacyNames.foreign),card(byRawName("Pensões: total, da Segurança Social e da Caixa Geral de Aposentações").values[selectedTerritory],"Pensões — total","Pensões: total, da Segurança Social e da Caixa Geral de Aposentações"),card(byRawName("Abono de família para crianças e jovens da Segurança Social").values[selectedTerritory],"Beneficiários de abono de família","Abono de família para crianças e jovens da Segurança Social")] }
 };
@@ -116,7 +116,10 @@ if(select) territoryNames.forEach(name => { const option=document.createElement(
 // Preenche o <select> de indicadores da página Comparar com os 50 indicadores.
 if(compareSelect){catalog.forEach(item => { const option=document.createElement("option"); option.value=item.key; option.textContent=item.name; compareSelect.appendChild(option); });compareSelect.value=selectedIndicatorKey;}
 // Desenha o mapa: um <path> SVG por município, com nome, clique e teclado (Enter/Espaço) para o selecionar.
-if(mapNodes) municipalityMapShapes.forEach(({ name, path, label:[x,y] }) => {
+// Posições de etiqueta corrigidas à mão (a original ficava sobre a fronteira e era tapada pelo vizinho).
+const mapLabelOverrides = { "Ponte da Barca":[402,228] };
+if(mapNodes) municipalityMapShapes.forEach(({ name, path, label:labelPos }) => {
+  const [x,y] = mapLabelOverrides[name] || labelPos;
   const ns="http://www.w3.org/2000/svg", g=document.createElementNS(ns,"g"), shape=document.createElementNS(ns,"path"), title=document.createElementNS(ns,"title"), label=document.createElementNS(ns,"text");
   g.classList.add("municipality-node"); g.dataset.territory=name; g.setAttribute("tabindex","0"); g.setAttribute("role","button"); g.setAttribute("aria-label",`Selecionar ${name}`);
   shape.setAttribute("d",path); shape.setAttribute("fill-rule","evenodd"); title.textContent=name;

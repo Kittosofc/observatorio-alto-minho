@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Libre+Franklin:wght@400;500;600&display=swap");
+:root { --font-title: "Montserrat", "Helvetica Neue", Arial, sans-serif; --font-body: "Libre Franklin", "Helvetica Neue", Arial, sans-serif; }
 /* Estilos globais e componentes comuns a todas as páginas */
 :root {
   --forest: #2f4468;
@@ -45,10 +47,10 @@ body.powerbi-embedded {
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; min-width: 320px; background: var(--paper); color: var(--ink); font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 16px; }
+body { margin: 0; min-width: 320px; background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 16px; }
 button, select, input { font: inherit; }
 h1, h2, h3, p { margin-top: 0; }
-h1, h2 { font-family: "Source Serif 4", Georgia, serif; font-weight: 500; letter-spacing: -.015em; }
+h1, h2, h3, h4 { font-family: var(--font-title); font-weight: 500; letter-spacing: -.015em; }
 body { -webkit-font-smoothing: antialiased; }
 .kpi .value, .indicator strong, .detail-value strong, .bar-value, .section-index { font-variant-numeric: lining-nums tabular-nums; }
 
@@ -56,13 +58,34 @@ body { -webkit-font-smoothing: antialiased; }
 .brand { color: inherit; text-decoration: none; display: flex; align-items: center; gap: 13px; }
 .brand-symbol { position: relative; display: block; flex: 0 0 auto; width: 46px; height: 46px; overflow: hidden; }
 .brand-symbol img { display: block; width: auto; max-width: none; height: 46px; }
-.brand b { display: block; font-family: "Source Serif 4", Georgia, serif; font-size: 20px; font-weight: 400; line-height: 1; }
+.brand b { display: block; font-family: var(--font-title); font-size: 20px; font-weight: 400; line-height: 1; }
 .brand small { display: block; margin-top: 5px; color: var(--muted); font-size: 12px; }
 .rail nav { display: grid; gap: 4px; margin-top: 70px; }
-.rail nav a { color: #55657d; text-decoration: none; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; transition: .2s ease; }
+.rail nav a { text-decoration: none; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; transition: .2s ease; }
 .rail nav a span { display: inline-block; width: 34px; color: #9aabc2; font-size: 11px; }
-.rail nav a:hover, .rail nav a.active { color: var(--forest); padding-left: 6px; }
-.rail nav a.active span { color: var(--yellow-ink); }
+/* Fundo de cada página: cores pastel ligeiramente escurecidas, alinhadas com a barra lateral */
+body[data-page="retrato"], body[data-page="municipio"] { --paper: #c4d8ef; }
+body[data-page="indicadores"] { --paper: #efc5c1; }
+body[data-page="comparar"] { --paper: #ead89b; }
+body[data-page="metodologia"] { --paper: #a9c98e; }
+body[data-page="transferencias"] { --paper: #c4d8ef; }
+/* Cores da barra lateral: texto e fundo pastel ao selecionar cada aba */
+.rail nav a:nth-child(4n+1) { --tc: #1f5fae; --tb: #e6effa; }
+.rail nav a:nth-child(4n+2) { --tc: #c0332b; --tb: #fbe7e4; }
+.rail nav a:nth-child(4n+3) { --tc: #8a680c; --tb: #fcf4d8; }
+.rail nav a:nth-child(4n+4) { --tc: #2e7d46; --tb: #e4f2e8; }
+.rail nav a {
+  color: var(--tc);
+  border-radius: 6px;
+  transition: background-color .2s ease, color .2s ease, padding-left .2s ease;
+}
+.rail nav a:hover, .rail nav a.active {
+  color: var(--tc);
+  background-color: var(--tb);
+  padding-left: 6px;
+  font-weight: 600;
+}
+.rail nav a.active span { color: var(--tc); }
 .rail-note { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--line); display: flex; gap: 10px; }
 .source-dot { width: 8px; height: 8px; flex: 0 0 auto; margin-top: 5px; border-radius: 50%; background: var(--green-ink); }
 .rail-note p { color: var(--muted); font-size: 12px; line-height: 1.5; }
@@ -84,8 +107,7 @@ body { -webkit-font-smoothing: antialiased; }
 main { margin-left: var(--rail); }
 .workspace { max-width: 1400px; margin: 0 auto; padding: 52px clamp(24px, 5vw, 78px) 80px; }
 .page-workspace { min-height: 100vh; }
-body[data-page="comparar"] main { background: #fdf9ec; }
-body[data-page="metodologia"] main { background: #f3ebcf; }
+body[data-page] main { background: var(--paper) !important; }
 body[data-page="comparar"] .page-workspace,
 body[data-page="metodologia"] .page-workspace { padding-top: 0; padding-bottom: 0; }
 body[data-page="metodologia"] .method-section { min-height: 100vh; }
@@ -95,7 +117,7 @@ body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .subpage-toolbar h1 { margin-bottom: 0; font-size: clamp(42px, 5vw, 68px); line-height: 1; }
 .territory-picker.compact { align-self: auto; margin-bottom: 0; }
 .overline { margin-bottom: 12px; color: var(--forest-2); font-size: 12px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
-.page-intro { min-height: 285px; display: grid; grid-template-columns: 1fr; gap: 60px; align-items: center; }
+.page-intro { min-height: 0; padding-bottom: 28px; display: grid; grid-template-columns: 1fr; gap: 60px; align-items: center; }
 .page-intro h1 { margin-bottom: 0; font-size: clamp(44px, 6vw, 82px); line-height: .96; }
 .page-intro h1 em { color: var(--forest-2); font-style: italic; }
 .territory-picker { align-self: end; margin-bottom: 34px; padding-left: 24px; border-left: 3px solid var(--yellow-ink); }
@@ -103,8 +125,7 @@ body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .territory-picker select, .compare-control select { width: 100%; min-height: 46px; border: 0; border-bottom: 1px solid #b9c9dd; border-radius: 0; padding: 0 28px 0 0; background: transparent; color: var(--forest); font-weight: 600; cursor: pointer; }
 .territory-picker p { margin: 9px 0 0; color: var(--muted); font-size: 12px; }
 
-.territory-title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 22px 0; border-top: 1px solid var(--line); }
-.territory-title-row span { color: var(--muted); font-size: 12px; }
+.territory-title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 22px 0; }
 .territory-title-row h2 { margin: 4px 0 0; font-size: clamp(32px, 4vw, 50px); }
 .territory-title-row > p { margin-bottom: 7px; color: var(--muted); font-size: 12px; }
 .territory-title-row i { display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: var(--forest-2); }
@@ -113,9 +134,9 @@ body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .map-panel { position: relative; overflow: hidden; padding: 24px; background: #f6efd6; }
 .map-panel::after { content: ""; position: absolute; width: 310px; height: 310px; right: -180px; bottom: -170px; border: 70px solid rgba(168,124,16,.07); border-radius: 50%; }
 .map-caption { display: flex; justify-content: space-between; gap: 20px; position: relative; z-index: 2; }
-.map-caption span { font-family: "Source Serif 4", Georgia, serif; font-size: 23px; }
+.map-caption span { font-family: var(--font-body); font-size: 23px; }
 .map-caption p { max-width: 170px; color: var(--muted); font-size: 12px; line-height: 1.45; }
-.region-map { position: relative; z-index: 2; display: block; width: 100%; height: 680px; margin-top: 2px; overflow: visible; }
+.region-map { position: relative; z-index: 2; display: block; width: 100%; height: 560px; margin-top: 2px; overflow: visible; }
 .municipality-node { cursor: pointer; outline: none; }
 .municipality-node path { fill: #a9c8ea; stroke: #fff; stroke-width: 2.2; vector-effect: non-scaling-stroke; transition: fill .18s ease, filter .18s ease; }
 .municipality-node:hover path, .municipality-node:focus path { filter: brightness(.94) drop-shadow(0 3px 3px rgba(47,68,104,.18)); }
@@ -126,19 +147,20 @@ body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .map-key { position: absolute; left: 24px; bottom: 22px; z-index: 3; color: var(--muted); font-size: 12px; }
 .map-key span { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 50%; background: #5f93cf; }
 .map-key small { margin-left: 16px; color: #8a9bb3; font-size: 10px; }
+.map-key .map-sources { display: block; margin: 6px 0 0; }
 
 .metric-panel { padding: 30px 34px; background: #fff; color: var(--ink); }
 .metric-heading { display: flex; justify-content: space-between; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
-.metric-heading p { margin-bottom: 0; font-family: "Source Serif 4", Georgia, serif; font-size: 25px; }
+.metric-heading p { margin-bottom: 0; font-family: var(--font-body); font-size: 25px; }
 .metric-heading span { color: var(--muted); font-size: 12px; }
 .kpis { display: grid; }
 .kpi { position: relative; display: grid; grid-template-columns: 90px 1fr auto; align-items: baseline; min-height: 102px; padding: 24px 0; border-bottom: 1px solid var(--line); }
 .kpi .year { grid-column: 1; color: var(--muted); font-size: 12px; font-weight: 600; }
-.kpi .value { grid-column: 2; font-family: "Source Serif 4", Georgia, serif; font-size: clamp(32px, 4vw, 50px); line-height: 1; }
+.kpi .value { grid-column: 2; font-family: var(--font-body); font-size: clamp(32px, 4vw, 50px); line-height: 1; }
 .kpi .label { grid-column: 3; max-width: 150px; color: var(--muted); font-size: 13px; text-align: right; }
 
 .themes { display: grid; grid-template-columns: 56px 260px 1fr; align-items: end; gap: 24px; padding: 58px 0 24px; border-bottom: 1px solid var(--line); }
-.section-index { color: var(--blue-ink); font-family: "Source Serif 4", Georgia, serif; font-size: 48px; font-style: italic; line-height: 1; }
+.section-index { color: var(--blue-ink); font-family: var(--font-title); font-size: 48px; font-style: italic; line-height: 1; }
 .section-copy h2, .compare-head h2, .catalog-head h2, .method-intro h2 { margin-bottom: 0; font-size: clamp(32px, 4vw, 52px); line-height: 1; }
 .theme-tabs { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
 .theme { min-height: 39px; padding: 8px 14px; border: 1px solid #c4d3e5; border-radius: 999px; background: #fff; color: #55657d; cursor: pointer; font-size: 13px; transition: .2s ease; }
@@ -150,7 +172,7 @@ body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .overview-copy > p:last-child { max-width: 430px; color: var(--muted); line-height: 1.65; }
 .indicator-cards { border-top: 1px solid var(--forest); }
 .indicator { display: grid; grid-template-columns: 130px 1fr auto; align-items: center; min-height: 86px; border-bottom: 1px solid var(--line); }
-.indicator strong { font-family: "Source Serif 4", Georgia, serif; font-size: 30px; font-weight: 400; }
+.indicator strong { font-family: var(--font-body); font-size: 30px; font-weight: 400; }
 .indicator span { color: #3b4b63; }
 .indicator small { color: var(--muted); font-size: 12px; }
 
@@ -175,11 +197,11 @@ body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .catalog-head { display: grid; grid-template-columns: 56px 1fr minmax(250px, 330px); align-items: end; gap: 24px; }
 .search-control input { width: 100%; height: 48px; border: 0; border-bottom: 1px solid #b9c9dd; border-radius: 0; padding: 0; background: transparent; color: var(--ink); }
 .indicator-detail { display: grid; grid-template-columns: minmax(260px, 1.35fr) minmax(190px, .65fr); gap: 26px 42px; margin-top: 38px; padding: 30px; background: #f6efd6; border-left: 6px solid #8fb7e3; border-radius: 0 8px 8px 0; }
-.detail-copy h3 { margin: 0 0 10px; font-family: "Source Serif 4", Georgia, serif; font-size: clamp(28px, 3vw, 40px); font-weight: 400; line-height: 1.05; }
+.detail-copy h3 { margin: 0 0 10px; font-family: var(--font-title); font-size: clamp(28px, 3vw, 40px); font-weight: 400; line-height: 1.05; }
 .detail-copy > p:last-child { max-width: 630px; margin-bottom: 0; color: var(--muted); line-height: 1.55; }
 .detail-value { align-self: center; text-align: right; }
 .detail-value span { display: block; margin-bottom: 6px; color: var(--muted); font-size: 12px; }
-.detail-value strong { font-family: "Source Serif 4", Georgia, serif; font-size: clamp(34px, 4vw, 54px); font-weight: 500; color: var(--blue-ink); }
+.detail-value strong { font-family: var(--font-body); font-size: clamp(34px, 4vw, 54px); font-weight: 500; color: var(--blue-ink); }
 .detail-meta { display: flex; gap: 34px; margin: 0; }
 .detail-meta div { min-width: 90px; }
 .detail-meta dt { margin-bottom: 4px; color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
@@ -217,7 +239,7 @@ td:last-child { color: var(--forest-2); font-weight: 600; }
 @media (max-width: 1080px) {
   :root { --rail: 210px; }
   .territory-stage { grid-template-columns: 1fr; }
-  .region-map { height: 520px; }
+  .region-map { height: 440px; }
   .themes { grid-template-columns: 48px 1fr; }
   .theme-tabs { grid-column: 2; justify-content: flex-start; }
   .theme-overview { grid-template-columns: 1fr; }
@@ -264,7 +286,7 @@ td:last-child { color: var(--forest-2); font-weight: 600; }
   .brand small, .source-link { display: none; }
   .page-intro h1 { font-size: 42px; }
   .map-panel { padding: 18px; }
-  .region-map { height: 420px; }
+  .region-map { height: 360px; }
   .map-caption { display: block; }
   .indicator { grid-template-columns: 100px 1fr; }
   .indicator small { grid-column: 2; margin-top: 4px; }
@@ -303,3 +325,20 @@ td:last-child { color: var(--forest-2); font-weight: 600; }
 .kpi:nth-child(4n) .year { color: var(--red-ink); }
 .indicator { transition: background .15s ease; }
 .indicator:hover { background: rgba(247,227,163,.3); }
+
+/* Aplicar o fundo pastel escurecido da página a toda a área de fundo */
+body[data-page],
+body[data-page] main,
+body[data-page] .workspace,
+body[data-page] .page-workspace {
+  background-color: var(--paper) !important;
+}
+body[data-page="comparar"] .compare-page-header,
+body[data-page="comparar"] .compare-section,
+body[data-page="metodologia"] .method-section {
+  background-color: var(--paper) !important;
+}
+body[data-page="comparar"] .page-workspace,
+body[data-page="metodologia"] .page-workspace {
+  min-height: 100vh;
+}

@@ -46,27 +46,28 @@
         <div>
           <p class="overline">01 · Retrato</p>
           <h1>Retrato do Alto Minho</h1>
-          <p>Escolha um município no mapa para ver o seu retrato estatístico: população, envelhecimento, poder de compra e emprego.</p>
         </div>
       </div>
 
+      <!-- Alto Minho em números (preenchido por index.js) -->
+      <section class="kpi-strip" id="kpi-strip" aria-label="Alto Minho em números"></section>
+
       <div class="territory-title-row">
-        <div><span>Território selecionado</span><h2 id="territory-title">Alto Minho</h2></div>
-        <p><i></i> Matriz de indicadores do projeto · fontes INE e Pordata</p>
+        <div><span>Território selecionado:</span><h2 id="territory-title">Alto Minho</h2></div>
       </div>
 
       <div class="territory-stage">
         <section class="map-panel" aria-label="Mapa dos municípios do Alto Minho">
           <div class="map-caption">
             <span>Mapa municipal</span>
-            <p>Selecione um município para explorar os seus indicadores.</p>
+            <p>Selecione um município para começar a explorar os seus indicadores.</p>
           </div>
           <svg class="region-map" viewBox="0 0 520 390" role="img" aria-labelledby="map-title map-description">
             <title id="map-title">Mapa interativo dos dez municípios do Alto Minho</title>
             <desc id="map-description">Limites administrativos dos municípios da Comunidade Intermunicipal do Alto Minho.</desc>
             <g id="map-nodes"></g>
           </svg>
-          <div class="map-key"><span></span> Município ativo <small>Limites: CAOP · DGT</small></div>
+          <div class="map-key"><div><span></span> Município ativo <small>Limites: CAOP · DGT</small></div><small class="map-sources">Fontes: INE e PORDATA</small></div>
         </section>
       </div>
 
