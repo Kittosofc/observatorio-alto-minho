@@ -17,20 +17,421 @@ const mapLabels = {
 
 // Correções manuais por indicador (chave = nome original no catálogo): permite mudar o nome
 // mostrado ou a descrição sem mexer nos ficheiros gerados (catalog-data.js / indicator-values.js).
+// Tudo o que se pode editar por indicador fica aqui (chave = nome original no catálogo):
+//   name        -> nome mostrado
+//   description -> descrição (caixa "Indicador selecionado")
+//   dimension   -> "Leitura"
+//   area        -> categoria (filtros da tabela): uma de categoryList
+//   sub         -> subcategoria (só Demografia): uma de demografiaSubs
+//   tab         -> separador da página inicial: Demografia, Habitação, Emprego, Educação, Saúde, Coesão social ou Outros
 const catalogOverrides = {
-  "População residente: total 2015 a 2025": { name:"População residente", description:"Número de pessoas com residência habitual no território." },
-  "Índice de envelhecimento": { description:"Relação entre a população idosa e a população jovem, por cada 100 jovens." },
-  "Saldo Migratório": { name:"Saldo migratório", description:"Diferença anual entre o número de entradas e saídas por migração no território." },
-  "Índice de dependência idosos": { name:"Índice de dependência de idosos" },
-  "Índice de Longividade": { name:"Índice de longevidade" },
-  "Nº de índividuos em idade ativa por idoso": { name:"Pessoas em idade ativa por pessoa idosa" },
-  "Preço médio m²": { name:"Preço médio por m²", description:"Valor mediano de venda por metro quadrado no mercado habitacional." },
-  "Rendimento médio": { description:"Ganho médio mensal dos trabalhadores por conta de outrem." },
-  "Pop. Estrangeira c/ estatuto residente": { name:"População estrangeira residente" },
-  "% famílias monoparentais": { name:"Núcleos familiares monoparentais", description:"Número de núcleos familiares monoparentais registados nos Censos 2021." },
-  "Proporção de pop. residente em movimentos pendulares": { name:"Movimentos pendulares" },
-  "Obitos por algumas causas de morte (%)": { name:"Óbitos por algumas causas de morte (%)" },
-  "Obitos por residentes total e por grupo etário": { name:"Óbitos de residentes" }
+  "Superfície Km2": {
+    name:"Superfície Km2",
+    description:"Superfície. Indicador integrado na matriz intermunicipal.",
+    dimension:"Superfície do território",
+    area:"Contexto territorial",
+    tab:"Outros"
+  },
+  "Índice de envelhecimento": {
+    name:"Índice de envelhecimento",
+    description:"Onde há mais e menos idosos por 100 jovens",
+    dimension:"Pessoas com 65+ anos por 100 jovens",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "Saldo Natural": {
+    name:"Saldo Natural",
+    description:"Estrutura etária · Envelhecimento/Natalidade. Indicador integrado na matriz intermunicipal.",
+    dimension:"Saldo natural anual",
+    area:"Demografia",
+    sub:"Natalidade",
+    tab:"Demografia"
+  },
+  "Densidade populacional": {
+    name:"Densidade populacional",
+    description:"Qual a densidade populacional por município",
+    dimension:"Habitantes por km²",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "População residente: total 2015 a 2025": {
+    name:"Variação população",
+    description:"Número de pessoas com residência habitual no território.",
+    dimension:"Total",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "População residente por freguesias censos 2021": {
+    name:"População com concelhos e freguesias",
+    description:"Dinâmica populacional · Estrutura da População. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total municipal",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "Índice de dependência idosos": {
+    name:"Dependência idosos",
+    description:"Onde há mais e menos idosos por 100 pessoas em idade ativa.",
+    dimension:"Pessoas idosas por 100 pessoas em idade ativa",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "Índice de dependência de jovens": {
+    name:"Dependência de jovens",
+    description:"Onde há mais e menos jovens por 100 pessoas em idade ativa.",
+    dimension:"Jovens por 100 pessoas em idade ativa",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "Índice de Longividade": {
+    name:"Índice de longevidade",
+    description:"Onde há mais e menos pessoas com 75 e mais anos por 100 idosos.",
+    dimension:"População com 75+ anos por 100 pessoas com 65+ anos",
+    area:"Demografia",
+    sub:"Esperança de Vida",
+    tab:"Demografia"
+  },
+  "Nº de índividuos em idade ativa por idoso": {
+    name:"Número de indivíduos em idade ativa por idosos",
+    description:"Dinâmica populacional · Estrutura da População. Indicador integrado na matriz intermunicipal.",
+    dimension:"Pessoas em idade ativa por pessoa idosa",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "População residente do sexo feminino: total e por grupo etário": {
+    name:"População residente do sexo feminino: total e por grupo etário",
+    description:"Dinâmica populacional · Estrutura da População. Indicador integrado na matriz intermunicipal.",
+    dimension:"Mulheres — total",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "População residente do sexo masculino: total e por grupo etário": {
+    name:"População residente do sexo masculino: total e por grupo etário",
+    description:"Dinâmica populacional · Estrutura da População. Indicador integrado na matriz intermunicipal.",
+    dimension:"Homens — total",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "Obitos por algumas causas de morte (%)": {
+    name:"Causas de morte",
+    description:"Onde morre maior e menor percentagem de pessoas por cancro, diabetes, por doenças do aparelho circulatório, por acidente ou suicídio.",
+    dimension:"Doenças do aparelho circulatório",
+    area:"Saúde",
+    tab:"Demografia"
+  },
+  "Obitos por residentes total e por grupo etário": {
+    name:"Óbitos de residentes",
+    description:"Dinâmica populacional · Estrutura da População. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total",
+    area:"Demografia",
+    sub:"Esperança de Vida",
+    tab:"Demografia"
+  },
+  "Taxa bruta de natalidade": {
+    name:"Taxa bruta de natalidade",
+    description:"Onde nascem mais e menos bebés por 1.000 residentes.",
+    dimension:"por mil habitantes",
+    area:"Demografia",
+    sub:"Natalidade",
+    tab:"Demografia"
+  },
+  "Taxa bruta de mortalidade": {
+    name:"Taxa bruta de mortalidade",
+    description:"Onde morrem mais e menos pessoas por 1.000 residentes",
+    dimension:"Óbitos por mil habitantes",
+    area:"Demografia",
+    sub:"Esperança de Vida",
+    tab:"Demografia"
+  },
+  "População estrangeira com estatuto legal de residente: total e por algumas nacionalidades": {
+    name:"Nacionalidades",
+    description:"Onde há mais e menos cidadãos estrangeiros a viver, por principais países de origem.",
+    dimension:"Total",
+    area:"Demografia",
+    sub:"Migração",
+    tab:"Demografia"
+  },
+  "Saldo Migratório": {
+    name:"Saldo migratório",
+    description:"Diferença anual entre o número de entradas e saídas por migração no território.",
+    dimension:"Saldo migratório anual",
+    area:"Demografia",
+    sub:"Migração",
+    tab:"Demografia"
+  },
+  "Preço médio m²": {
+    name:"Valor de venda de habitação",
+    description:"Valor mediano de venda por metro quadrado no mercado habitacional.",
+    dimension:"Valor mediano de venda",
+    area:"Condições de vida",
+    tab:"Habitação"
+  },
+  "Desempregados inscritos nos centros de emprego e de formação profissional no total da população residente com 15 a 64 anos (%)": {
+    name:"Percentagem de desemprego",
+    description:"Onde maior e menor percentagem de pessoas entre os 15 e os 64 anos registadas no IEFP à procura de emprego.",
+    dimension:"Total",
+    area:"Emprego e Remunerações",
+    tab:"Emprego"
+  },
+  "Diferença entre o salário mínimo nacional e a remuneração base média mensal dos trabalhadores por conta de outrem": {
+    name:"Diferença entre o salário mínimo nacional e a remuneração base média mensal dos trabalhadores por conta de outrem",
+    description:"Acesso · Mercado. Indicador integrado na matriz intermunicipal.",
+    dimension:"Remuneração média menos SMN de 2024 (€820)",
+    area:"Emprego e Remunerações",
+    tab:"Emprego"
+  },
+  "Desempregados inscritos nos centros de emprego e de formação profissional (média anual): total e por grupo etário": {
+    name:"Desempregados inscritos nos centros de emprego e de formação profissional (média anual): total e por grupo etário",
+    description:"Acesso · Mercado. Indicador integrado na matriz intermunicipal.",
+    dimension:"Média anual — total",
+    area:"Emprego e Remunerações",
+    tab:"Emprego"
+  },
+  "Desempregados inscritos nos centros de emprego e de formação profissional": {
+    name:"Desempregados inscritos nos centros de emprego e de formação profissional",
+    description:"Acesso · Mercado. Indicador integrado na matriz intermunicipal.",
+    dimension:"Inscritos em dezembro",
+    area:"Emprego e Remunerações",
+    tab:"Emprego"
+  },
+  "Rendimento médio": {
+    name:"Ganho médio mensal",
+    description:"Ganho médio mensal dos trabalhadores por conta de outrem.",
+    dimension:"Ganho médio mensal",
+    area:"Emprego e Remunerações",
+    tab:"Emprego"
+  },
+  "Taxa de retenção e desistência no ensino básico: total e por ano de escolaridade": {
+    name:"Retenção no ensino básico",
+    description:"Onde há mais e menos percentagem de alunos matriculados do 1.º ao 9.º ano que reprovam ou desistem.",
+    dimension:"Total do ensino básico",
+    area:"Educação",
+    tab:"Educação"
+  },
+  "Taxa de retenção e desistência no ensino secundário: total, por modalidade de ensino e ano de escolaridade": {
+    name:"Retenção no ensino secundário",
+    description:"Onde há mais e menos alunos matriculados do 10.º ao 12.º ano que reprovam ou desistem.",
+    dimension:"Total do ensino secundário",
+    area:"Educação",
+    tab:"Educação"
+  },
+  "Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino": {
+    name:"Estabelecimentos de ensino",
+    description:"Onde há mais e menos escolas do pré-escolar, básico ou secundário.",
+    dimension:"Soma dos 5 níveis de ensino (cada estabelecimento conta uma vez por cada ensino que ministra)",
+    area:"Educação",
+    tab:"Educação"
+  },
+  "Taxa de analfabetismo": {
+    name:"Taxa de analfabetismo",
+    description:"Percentagem da população residente que não sabe ler nem escrever.",
+    dimension:"Ambos os sexos",
+    area:"Educação",
+    tab:"Habitação"
+  },
+  "Habitantes por médico e farmacêutico": {
+    name:"Habitantes por médico",
+    description:"Abandono · Sucesso. Indicador integrado na matriz intermunicipal.",
+    dimension:"Habitantes por médico",
+    area:"Saúde",
+    tab:"Saúde"
+  },
+  "Habitantes por farmácia e posto farmacêutico móvel": {
+    name:"Habitantes por farmácia",
+    description:"Abandono · Sucesso. Indicador integrado na matriz intermunicipal.",
+    dimension:"Habitantes por farmácia/posto",
+    area:"Saúde",
+    tab:"Saúde"
+  },
+  "Profissionais de saúde: médicos, dentistas, enfermeiros e farmacêuticos": {
+    name:"Profissionais saúde",
+    description:"Acesso · Cuidados. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total das quatro profissões",
+    area:"Saúde",
+    tab:"Saúde"
+  },
+  "Beneficiários do Rendimento Mínimo Garantido e Rendimento Social de Inserção da Segurança Social: total e por sexo": {
+    name:"Beneficiários do Rendimento Mínimo Garantido e Rendimento Social de Inserção da Segurança Social: total e por sexo",
+    description:"Acesso · Cuidados. Indicador integrado na matriz intermunicipal.",
+    dimension:"Ambos os sexos — total",
+    area:"Proteção Social",
+    tab:"Coesão social"
+  },
+  "Pensões da Segurança Social: total, de sobrevivência, de invalidez e de velhice": {
+    name:"Pensões SS",
+    description:"Acesso · Cuidados. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total",
+    area:"Proteção Social",
+    tab:"Coesão social"
+  },
+  "Subsídio por assistência à 3ª pessoa da Segurança Social": {
+    name:"Subsídios 3ª pessoa",
+    description:"Acesso · Cuidados. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total",
+    area:"Proteção Social",
+    tab:"Coesão social"
+  },
+  "Pensões: total, da Segurança Social e da Caixa Geral de Aposentações": {
+    name:"Pensões totais",
+    description:"Acesso · Cuidados. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total",
+    area:"Proteção Social",
+    tab:"Coesão social"
+  },
+  "Beneficiários do subsídio de desemprego da Segurança Social no total de beneficiários ativos (%)": {
+    name:"Subsídio desempregado",
+    description:"Acesso · Cuidados. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total",
+    area:"Proteção Social",
+    tab:"Coesão social"
+  },
+  "Beneficiários do Rendimento Mínimo Garantido e Rendimento Social de Inserção da Segurança Social no total da população residente com 15 e mais anos (%)": {
+    name:"RSI",
+    description:"Onde há mais e menos pessoas a receber o apoio da Segurança Social para famílias mais carenciadas, por 100 residentes.",
+    dimension:"Total",
+    area:"Proteção Social",
+    tab:"Coesão social"
+  },
+  "Abono de família para crianças e jovens da Segurança Social": {
+    name:"Abono de família",
+    description:"Onde há mais e menos famílias, crianças e jovens a receber o apoio da Segurança Social para sustento e educação dos filhos.",
+    dimension:"Total",
+    area:"Proteção Social",
+    tab:"Coesão social"
+  },
+  "Caixa Geral de Aposentações: reformados/aposentados e pensionistas": {
+    name:"Reformados CGA",
+    description:"Acesso · Cuidados. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total",
+    area:"Proteção Social",
+    tab:"Coesão social"
+  },
+  "Pop. Estrangeira c/ estatuto residente": {
+    name:"População estrangeira total",
+    description:"Onde há mais e menos cidadãos estrangeiros a viver em Portugal no total.",
+    dimension:"Total",
+    area:"Demografia",
+    sub:"Migração",
+    tab:"Coesão social"
+  },
+  "Diferença salarial H/M (%)": {
+    name:"Diferença salarial H/M (%)",
+    description:"Igualdade de género · Igualdade de género. Indicador integrado na matriz intermunicipal.",
+    dimension:"Diferença do ganho médio mensal face aos homens",
+    area:"Emprego e Remunerações",
+    tab:"Emprego"
+  },
+  "% famílias monoparentais": {
+    name:"Núcleos familiares monoparentais",
+    description:"Número de núcleos familiares monoparentais registados nos Censos 2021.",
+    dimension:"Núcleos familiares monoparentais (N.º)",
+    area:"Condições de vida",
+    tab:"Outros"
+  },
+  "Proporção de pop. residente em movimentos pendulares": {
+    name:"Movimentos pendulares",
+    description:"Proporção da população residente que sai da unidade territorial.",
+    dimension:"População em movimentos pendulares",
+    area:"Mobilidade",
+    tab:"Emprego"
+  },
+  "Despesa das Câmaras Municipais em cultura e desporto: total, correntes e de capital": {
+    name:"Despesa das Câmaras Municipais em cultura e desporto: total, correntes e de capital",
+    description:"Transportes · Movimentos. Indicador integrado na matriz intermunicipal.",
+    dimension:"Despesa total",
+    area:"Cultura",
+    tab:"Outros"
+  },
+  "Poder de compra per capita": {
+    name:"Poder de compra",
+    description:"Onde há, em média, por pessoa, maior e menor bem estar material?",
+    dimension:"Portugal = 100",
+    area:"Condições de vida",
+    tab:"Outros"
+  },
+  "Crimes registados pelas polícias por mil habitantes": {
+    name:"Crimes registados",
+    description:"Transportes · Movimentos. Indicador integrado na matriz intermunicipal.",
+    dimension:"Crimes por mil habitantes",
+    area:"Segurança",
+    tab:"Outros"
+  },
+  "Freguesias": {
+    name:"Número de Freguesias",
+    description:"Onde há mais e menos freguesias",
+    dimension:"Número de freguesias",
+    area:"Contexto territorial",
+    tab:"Outros"
+  },
+  "Índice de dependência total": {
+    name:"Dependência total decomposta",
+    description:"Onde há mais e menos jovens e idosos por 100 pessoas em idade ativa.",
+    dimension:"Jovens e idosos por 100 pessoas em idade ativa",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "População residente (estimativas a 31 de dezembro): total e por sexo": {
+    name:"População residente por sexo",
+    description:"Dinâmica populacional · Distribuição da população. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total (estimativa a 31 de dezembro)",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  },
+  "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo": {
+    name:"Ganho médio por sexo",
+    description:"Onde é maior e menor o ordenado médio, por mês, com horas extra, subsídios ou prémios, dos homens ou mulheres aprendizes, quadros médios e superiores ou outros empregados.",
+    dimension:"Ganho médio mensal — total",
+    area:"Emprego e Remunerações",
+    tab:"Emprego"
+  },
+  "Beneficiários do Rendimento Mínimo Garantido e Rendimento Social de Inserção da Segurança Social: total e por grupo etário": {
+    name:"RSI: grupo etário",
+    description:"Acesso · Cuidados. Indicador integrado na matriz intermunicipal.",
+    dimension:"Total (todos os grupos etários)",
+    area:"Proteção Social",
+    tab:"Coesão social"
+  },
+  "População estrangeira com estatuto legal de residente: total e por sexo": {
+    name:"População estrangeira por sexo",
+    description:"Onde vivem mais e menos cidadãos estrangeiros, homens ou mulheres.",
+    dimension:"Total",
+    area:"Demografia",
+    sub:"Migração",
+    tab:"Coesão social"
+  },
+  "Saldo Total": {
+    name:"Saldos populacionais",
+    description:"Onde há maior e menor diferença entre o número de nascimentos e de mortes (saldo natural) e entre o número de imigrantes e de emigrantes (saldo migratório).",
+    dimension:"Saldo total anual",
+    area:"Demografia",
+    sub:"Migração",
+    tab:"Demografia"
+  },
+  "Habitantes por farmacêutico": {
+    name:"Habitantes por farmacêutico",
+    description:"Número médio de habitantes por farmacêutico.",
+    dimension:"Habitantes por farmacêutico",
+    area:"Saúde",
+    tab:"Saúde"
+  },
+  "Pirâmide etária": {
+    name:"Pirâmide etária",
+    description:"Peso da população idosa (65 ou mais anos) no total da população residente.",
+    dimension:"População com 65 ou mais anos (% do total) — topo da pirâmide etária",
+    area:"Demografia",
+    sub:"População",
+    tab:"Demografia"
+  }
 };
 
 // ===== 2. ÁREAS (separadores) =====
@@ -40,17 +441,18 @@ const areaByDomain = {
   "Demografia":"Demografia", "Habitação":"Habitação", "Saúde":"Saúde",
   "Proteção Social":"Coesão social", "Mobilidade":"Emprego"
 };
-const emprego = ["Desempregados inscritos nos centros de emprego e de formação profissional no total da população residente com 15 a 64 anos (%)",
-  "Diferença entre o salário mínimo nacional e a remuneração base média mensal dos trabalhadores por conta de outrem",
-  "Desempregados inscritos nos centros de emprego e de formação profissional (média anual): total e por grupo etário",
-  "Desempregados inscritos nos centros de emprego e de formação profissional", "Rendimento médio", "Diferença salarial H/M (%)",
-  "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo"];
-const educacao = ["Taxa de retenção e desistência no ensino básico: total e por ano de escolaridade",
-  "Taxa de retenção e desistência no ensino secundário: total, por modalidade de ensino e ano de escolaridade",
-  "Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino"];
-const areaByName = { ...Object.fromEntries(emprego.map(n => [n, "Emprego"])), ...Object.fromEntries(educacao.map(n => [n, "Educação"])) };
 // Separador onde o indicador aparece ("Outros" se não encaixar em nenhum).
-const tabOf = item => areaByName[item.name] || areaByDomain[item.domain] || "Outros";
+const tabOf = item => areaByDomain[item.domain] || "Outros"; // valor por defeito; o catalogOverrides tem prioridade
+
+// ===== 2b. CATEGORIAS DA PÁGINA INDICADORES =====
+// Botões de filtro da tabela. Cada indicador tem uma categoria (e a Demografia ainda uma subcategoria).
+// Por defeito segue o domínio do catálogo; as exceções estão no catalogOverrides (campo area).
+const categoryList = ["Condições de vida","Contexto territorial","Cultura","Demografia","Educação","Emprego e Remunerações","Mobilidade","Proteção Social","Saúde","Segurança"];
+const demografiaSubs = ["População","Natalidade","Migração","Esperança de Vida"];
+const categoryByDomain = { "Contexto Geográfico":"Contexto territorial", "Demografia":"Demografia", "Saúde":"Saúde", "Proteção Social":"Proteção Social",
+  "Mobilidade":"Mobilidade", "Cultura":"Cultura", "Segurança":"Segurança", "Condições de vida":"Condições de vida", "Família":"Condições de vida", "Habitação":"Condições de vida" };
+const categoryOf = item => categoryByDomain[item.domain] || "Contexto territorial"; // valor por defeito
+const subOf = item => categoryOf(item) === "Demografia" ? "População" : ""; // valor por defeito
 
 // ===== 3. CATÁLOGO FINAL =====
 // Junta, para cada indicador: dados do catálogo (catalog-data.js) + valores por território
@@ -59,7 +461,7 @@ const tabOf = item => areaByName[item.name] || areaByDomain[item.domain] || "Out
 const catalog = indicatorCatalog.map((item, index) => {
   const dataset = indicatorValuesByName[item.name];
   const context = [item.theme, item.category].filter(Boolean).join(" · ");
-  const base = { key:`catalog-${index + 1}`, rawName:item.name, name:item.name, tab:tabOf(item), area:tabOf(item) === "Outros" ? item.domain : tabOf(item), source:item.source,
+  const base = { key:`catalog-${index + 1}`, rawName:item.name, name:item.name, tab:tabOf(item), area:categoryOf(item), sub:subOf(item), source:item.source,
     sourceUrl:item.url, description:context ? `${context}. Indicador integrado na matriz intermunicipal.` : "Indicador integrado na matriz intermunicipal.", ...dataset };
   return { ...base, ...(catalogOverrides[item.name] || {}) };
 });
@@ -105,6 +507,7 @@ const savedTerritory = localStorage.getItem("observatorio-territory");
 const savedIndicatorKey = localStorage.getItem("observatorio-indicator");
 let selectedTerritory = territoryNames.includes(savedTerritory) ? savedTerritory : "Alto Minho";
 let selectedTheme = "Demografia";
+let selectedCategory = "Todas", selectedSub = "";
 let selectedIndicatorKey = catalog.some(item => item.key === savedIndicatorKey) ? savedIndicatorKey : byRawName(legacyNames.population).key;
 // Formata números à portuguesa (casas decimais e separadores); sem valor mostra "—".
 const format = value => value == null || value === "—" ? "—" : typeof value === "string" ? value : new Intl.NumberFormat("pt-PT", { maximumFractionDigits:2 }).format(value);
@@ -213,16 +616,41 @@ function renderCatalog(query=""){
   const normalized=query.trim().toLocaleLowerCase("pt-PT");
   const matches=normalized
     ? catalog.filter(item=>`${item.name} ${item.area} ${item.year} ${item.source} ${item.dimension}`.toLocaleLowerCase("pt-PT").includes(normalized))
-    : catalog.filter(item=>item.tab===selectedTheme);
-  if(caption)caption.textContent=normalized?`Resultados da pesquisa · ${matches.length}`:`Indicadores de ${selectedTheme} · ${matches.length}`;
-  body.innerHTML=matches.map(item=>`<tr class="catalog-row ${item.key===selectedIndicatorKey?'active':''}" tabindex="0" role="button" data-indicator-key="${item.key}" aria-label="Ver ${item.name}"><td>${item.name}</td><td>${item.area}</td><td>${item.year}</td><td>${item.source}</td></tr>`).join(""); empty.hidden=matches.length>0;
+    : catalog;
+  // Filtro por botões de categoria (e subcategoria da Demografia); a pesquisa respeita o filtro.
+  const filtered=matches.filter(item=>(selectedCategory==="Todas"||item.area===selectedCategory)&&(!selectedSub||item.sub===selectedSub));
+  const label=selectedCategory==="Todas"?"todas as categorias":(selectedSub?`${selectedCategory} · ${selectedSub}`:selectedCategory);
+  if(caption)caption.textContent=normalized?`Resultados da pesquisa · ${label} · ${filtered.length}`:`Indicadores · ${label} · ${filtered.length}`;
+  body.innerHTML=filtered.map(item=>`<tr class="catalog-row ${item.key===selectedIndicatorKey?'active':''}" tabindex="0" role="button" data-indicator-key="${item.key}" aria-label="Ver ${item.name}"><td>${item.name}</td><td>${item.area}</td><td>${item.year}</td><td>${item.source}</td></tr>`).join(""); empty.hidden=filtered.length>0;
   document.querySelectorAll(".catalog-row").forEach(row=>{const choose=scrollToDetail=>selectCatalogIndicator(row.dataset.indicatorKey,scrollToDetail);row.addEventListener("click",()=>choose(false));row.addEventListener("dblclick",()=>choose(true));row.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();choose(false);}});});
 }
+
+// Botões de categoria (e subcategoria da Demografia) por cima da tabela de indicadores.
+function renderCategoryButtons(){
+  const bar=document.querySelector("#category-filter"),subBar=document.querySelector("#subcategory-filter");if(!bar)return;
+  const btn=(text,active,attr)=>`<button type="button" class="cat-btn${active?" active":""}" ${attr} aria-pressed="${active}">${text}</button>`;
+  bar.innerHTML=["Todas",...categoryList].map(c=>btn(c,c===selectedCategory,`data-category="${c}"`)).join("");
+  if(subBar){subBar.hidden=selectedCategory!=="Demografia";subBar.innerHTML=["Todas",...demografiaSubs].map(s=>btn(s,(s==="Todas"?"":s)===selectedSub,`data-sub="${s}"`)).join("");}
+}
+function setCategory(name,sub=""){selectedCategory=name;selectedSub=sub;renderCategoryButtons();renderCatalog(document.querySelector("#indicator-search")?.value||"");}
+document.querySelector("#category-filter")?.addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(b)setCategory(b.dataset.category);});
+document.querySelector("#subcategory-filter")?.addEventListener("click",e=>{const b=e.target.closest("[data-sub]");if(b)setCategory("Demografia",b.dataset.sub==="Todas"?"":b.dataset.sub);});
 
 // Painel "Indicador selecionado": nome, descrição, valor no território ativo, área, ano, leitura e fonte.
 function renderCatalogDetail(){
   if(!document.querySelector("#indicator-detail"))return;
   const item=catalog.find(entry=>entry.key===selectedIndicatorKey)||catalog[0]; document.querySelector("#detail-name").textContent=item.name; document.querySelector("#detail-description").textContent=item.description; document.querySelector("#detail-territory").textContent=selectedTerritory; document.querySelector("#detail-value").textContent=formattedValue(item,item.values[selectedTerritory]); document.querySelector("#detail-area").textContent=item.area; document.querySelector("#detail-year").textContent=item.year; document.querySelector("#detail-dimension").textContent=item.dimension; document.querySelector("#detail-source").textContent=item.source; document.querySelector("#detail-source-link").href=item.sourceUrl; document.querySelector("#indicator-compare-button").disabled=false;
+  // Detalhe por categoria (ex.: Nacionalidade → nº de pessoas por país, no território escolhido).
+  const box=document.querySelector("#detail-breakdown");
+  if(box){
+    const rows=(item.breakdown||[]).map(part=>({name:part.name,year:part.year,value:part.values?.[selectedTerritory]})).filter(r=>r.value!=null).sort((a,b)=>b.value-a.value);
+    const kind=item.breakdownLabel||"nacionalidade";
+    box.hidden=!rows.length;
+    // O total só se esconde quando as categorias não estão todas no ano mais recente (ex.: nacionalidades),
+    // ou quando o indicador tem `breakdownHideTotal` (causas de morte, ganho por sexo).
+    const valueBox=document.querySelector(".detail-value"); if(valueBox)valueBox.hidden=!!item.breakdownHideTotal||rows.some(r=>String(r.year)!==String(item.year));
+    box.innerHTML=rows.length?`<p class="overline">Por ${kind} · ${selectedTerritory}</p><table><thead><tr><th>${kind[0].toUpperCase()+kind.slice(1)}</th><th>${item.breakdownColumn||"Pessoas"}</th><th>Ano</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.name}</td><td>${format(r.value)}${item.suffix||""}</td><td>${r.year}</td></tr>`).join("")}</tbody></table>`:"";
+  }
 }
 // Escolhe um indicador: guarda-o, atualiza o painel de detalhe e a linha destacada na tabela.
 function selectCatalogIndicator(key,scrollToDetail=false){
@@ -262,4 +690,4 @@ if(document.modelContext?.registerTool){
 
 // ===== 7. ARRANQUE =====
 // Desenha a tabela e depois o território inicial (o que dispara render() e preenche o resto).
-renderCatalog(); setTerritory(selectedTerritory);
+renderCategoryButtons(); renderCatalog(); setTerritory(selectedTerritory);

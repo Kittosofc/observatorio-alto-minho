@@ -10,7 +10,7 @@
     ["População residente", "População residente: total 2015 a 2025", 0, "hab.", "Pessoas a viver no Alto Minho"],
     ["Rendimento médio mensal", "Rendimento médio", 0, "€", "Ganho médio dos trabalhadores por conta de outrem"],
     ["Retenção e desistência no secundário", "Taxa de retenção e desistência no ensino secundário: total, por modalidade de ensino e ano de escolaridade", 1, "%", "Educação · ensino secundário (total)"],
-    ["Índice de envelhecimento", "Índice de envelhecimento", 1, "idosos por 100 jovens", "Pessoas com 65+ anos por 100 jovens"]
+    ["Índice de envelhecimento", "Índice de envelhecimento", 1, "idosos", "Pessoas com 65+ anos por 100 jovens"]
   ];
   strip.innerHTML = specs.map(([label, key, d, unit, desc]) => {
     const ds = indicatorValuesByName[key];

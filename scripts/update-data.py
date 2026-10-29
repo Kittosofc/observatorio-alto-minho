@@ -581,6 +581,64 @@ def update_pordata(values_by_name: dict, report: list[dict]) -> int:
     return updated
 
 
+# Indicadores com detalhe por categoria: (nome, ficheiro Pordata, rótulo da categoria, renomear categorias).
+# Ao adicionar um indicador novo com detalhe, acrescentar aqui e o update-data.py passa a atualizá-lo.
+BREAKDOWNS = (
+    ("População estrangeira com estatuto legal de residente: total e por algumas nacionalidades", "101.xlsx", "nacionalidade", {}),
+    ("População estrangeira com estatuto legal de residente: total e por sexo", "99.xlsx", "sexo", {"Masculino": "Homens", "Feminino": "Mulheres"}),
+    ("Obitos por algumas causas de morte (%)", "373.xlsx", "causa de morte", {}),
+    ("Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino", "213.xlsx", "nível de ensino", {}),
+    ("Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo", "282.xlsx", "sexo", {"Masculino": "Homens", "Feminino": "Mulheres"}),
+)
+
+# Indicadores em que o valor "total" grande não aparece no detalhe (só a tabela por categoria).
+BREAKDOWNS_WITHOUT_TOTAL = {
+    "Obitos por algumas causas de morte (%)",
+    "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo",
+}
+
+
+def update_breakdowns(values_by_name: dict, report: list[dict]) -> None:
+    """Lê os ficheiros da Pordata de BREAKDOWNS (nacionalidade, sexo) e guarda em `breakdown` o nº de pessoas
+    por categoria e território (usado na tabela do detalhe do indicador) e em `breakdownLabel` o rótulo.
+    Para cada categoria usa o ano mais recente com dados nos 11 territórios (a Pordata deixa alguns valores a 0
+    nos anos mais recentes). Se falhar, mantém o `breakdown` anterior e regista o motivo em `report`."""
+    for name, file_name, label_kind, renames in BREAKDOWNS:
+        try:
+            rows, territory_rows, year_by_column = read_pordata_layout(PORDATA_DIRECTORY / file_name)
+            year_row = next(i for i, row in enumerate(rows) if row and normalized(row[0]) == "ambito geografico")
+            # Linha com os nomes das categorias: a 1.ª não vazia acima da linha dos anos (pode haver linhas em branco).
+            group_row = next(rows[i] for i in range(year_row - 1, -1, -1) if any(c >= 2 and v not in (None, "") for c, v in enumerate(rows[i])))
+            starts = [(column, str(label).strip()) for column, label in enumerate(group_row) if column >= 2 and label not in (None, "")]
+            items = []
+            for index, (start, label) in enumerate(starts):
+                if normalized(label) == "total":
+                    continue
+                end = starts[index + 1][0] if index + 1 < len(starts) else len(rows[year_row])
+                by_year: dict[int, dict[str, float | int]] = {}
+                for column in range(start, end):
+                    year = year_by_column.get(column)
+                    if year is None:
+                        continue
+                    for territory, row_index in territory_rows.items():
+                        value = as_number(rows[row_index][column]) if column < len(rows[row_index]) else None
+                        if value is not None:
+                            by_year.setdefault(year, {})[territory] = value
+                valid = [y for y in sorted(by_year) if len(by_year[y]) == len(TERRITORIES) and by_year[y].get("Alto Minho", 0) > 0]
+                if valid:
+                    items.append({"name": renames.get(label, label), "year": str(valid[-1]), "values": {t: by_year[valid[-1]][t] for t in TERRITORIES}})
+            if not items:
+                raise ValueError("nenhuma categoria encontrada")
+            values_by_name[name]["breakdown"] = items
+            values_by_name[name]["breakdownLabel"] = label_kind
+            values_by_name[name]["breakdownHideTotal"] = name in BREAKDOWNS_WITHOUT_TOTAL
+            unit = str(values_by_name[name].get("unit") or "pessoas")
+            values_by_name[name]["breakdownColumn"] = "%" if values_by_name[name].get("suffix") == "%" else unit[:1].upper() + unit[1:]
+            report.append({"indicator": f"{name} (por {label_kind})", "source": "Pordata", "status": "updated", "categories": len(items)})
+        except Exception as error:
+            report.append({"indicator": f"{name} (por {label_kind})", "source": "Pordata", "status": "kept-breakdown", "reason": str(error)})
+
+
 def update_salary_difference(values_by_name: dict, report: list[dict]) -> int:
     """Calcula a diferença entre o rendimento médio (INE) e o salário mínimo nacional (Pordata, ficheiro 74.xlsx),
     para o ano mais recente e para cada ano do histórico em que exista salário mínimo. Lança erro se o salário
@@ -744,6 +802,7 @@ def main() -> None:
     expected_pordata = len(json.loads(PORDATA_SOURCES_PATH.read_text(encoding="utf-8")))
     report: list[dict] = []
     pordata_count = update_pordata(values_by_name, report)
+    update_breakdowns(values_by_name, report)
     ine_count = update_ine(values_by_name, report)
     pordata_count += update_salary_difference(values_by_name, report)
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)

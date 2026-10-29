@@ -108,8 +108,6 @@ main { margin-left: var(--rail); }
 .workspace { max-width: 1400px; margin: 0 auto; padding: 52px clamp(24px, 5vw, 78px) 80px; }
 .page-workspace { min-height: 100vh; }
 body[data-page] main { background: var(--paper) !important; }
-body[data-page="comparar"] .page-workspace,
-body[data-page="metodologia"] .page-workspace { padding-top: 0; padding-bottom: 0; }
 body[data-page="metodologia"] .method-section { min-height: 100vh; }
 body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .subpage-toolbar { display: grid; grid-template-columns: 1fr; gap: 60px; align-items: end; padding: 18px 0 46px; border-bottom: 1px solid var(--line); }
@@ -119,6 +117,7 @@ body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .overline { margin-bottom: 12px; color: var(--forest-2); font-size: 12px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
 .page-intro { min-height: 0; padding-bottom: 28px; display: grid; grid-template-columns: 1fr; gap: 60px; align-items: center; }
 .page-intro h1 { margin-bottom: 0; font-size: clamp(44px, 6vw, 82px); line-height: .96; }
+.page-intro p { margin: 12px 0 0; max-width: 760px; font-size: 17px; line-height: 1.55; color: var(--muted); }
 .page-intro h1 em { color: var(--forest-2); font-style: italic; }
 .territory-picker { align-self: end; margin-bottom: 34px; padding-left: 24px; border-left: 3px solid var(--yellow-ink); }
 .territory-picker label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 13px; }
