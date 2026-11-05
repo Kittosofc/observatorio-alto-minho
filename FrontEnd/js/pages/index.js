@@ -1,5 +1,5 @@
 // Página inicial: o Retrato usa a lógica de municipio.js (adapta caminhos à raiz).
-// Aqui: faixa "Alto Minho em números" (carregado depois de municipio.js).
+// Aqui: faixa "Alto Minho em números", escondida até se clicar no minimapa "Alto Minho" (carregado depois de municipio.js).
 (function () {
   const strip = document.getElementById("kpi-strip");
   if (!strip) return;
@@ -17,4 +17,21 @@
     if (!ds || ds.values[REGIAO] == null) return "";
     return `<article class="mun-card"><div><span class="l">${label}</span><span class="y">${ds.year}</span></div><div class="v"><b>${f(ds.values[REGIAO], d)}</b><small>${unit}</small></div><div class="c">${desc}</div></article>`;
   }).join("");
+})();
+
+// Minimapa = botão: abre/fecha os cartões da região por cima do mapa.
+(function () {
+  const strip = document.getElementById("kpi-strip"), mini = document.getElementById("mini-map");
+  if (!strip || !mini) return;
+  mini.setAttribute("aria-controls", "kpi-strip");
+  mini.setAttribute("title", "Ver dados do Alto Minho");
+  const set = open => {
+    strip.hidden = !open;
+    mini.classList.toggle("active", open);
+    mini.setAttribute("aria-expanded", String(open));
+  };
+  set(false);
+  // Corre depois do listener de app.js (que marca sempre como ativo), por isso o estado final é o nosso.
+  mini.addEventListener("click", () => set(strip.hidden));
+  mini.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") set(strip.hidden); });
 })();

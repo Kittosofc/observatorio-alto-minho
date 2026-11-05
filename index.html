@@ -18,7 +18,7 @@
       <span class="brand-symbol" aria-hidden="true"><img src="./FrontEnd/imgs/cim-alto-minho.svg" alt=""></span>
       <span><b>Alto Minho</b><small>Observatório territorial</small></span>
     </a>
-    <div class="rail-territory">
+    <div class="rail-territory" style="visibility:hidden" aria-hidden="true">
       <label for="territory-select">Território em análise</label>
       <select id="territory-select" aria-label="Escolha o território"></select>
       <p>10 municípios · NUTS III Alto Minho</p>
@@ -48,24 +48,23 @@
       </div>
 
       <!-- Alto Minho em números (preenchido por index.js) -->
-      <section class="kpi-strip" id="kpi-strip" aria-label="Alto Minho em números"></section>
-
-      <div class="territory-title-row">
-        <div><span>Território selecionado:</span><h2 id="territory-title">Alto Minho</h2></div>
-      </div>
+      <section class="kpi-strip" id="kpi-strip" aria-label="Alto Minho em números" hidden></section>
 
       <div class="territory-stage">
         <section class="map-panel" aria-label="Mapa dos municípios do Alto Minho">
           <div class="map-caption">
             <span>Mapa municipal</span>
-            <p>Selecione um município para começar a explorar os seus indicadores.</p>
+            <p>Clique em «Alto Minho» para ver os dados da região</p>
+          </div>
+          <div class="mini-map" id="mini-map" role="img" aria-label="Alto Minho">
+            <svg viewBox="0 0 100 100"><g id="mini-map-shapes"></g></svg>
           </div>
           <svg class="region-map" viewBox="0 0 520 390" role="img" aria-labelledby="map-title map-description">
             <title id="map-title">Mapa interativo dos dez municípios do Alto Minho</title>
             <desc id="map-description">Limites administrativos dos municípios da Comunidade Intermunicipal do Alto Minho.</desc>
             <g id="map-nodes"></g>
           </svg>
-          <div class="map-key"><div><span></span> Município ativo <small>Limites: CAOP · DGT</small></div><small class="map-sources">Fontes: INE e PORDATA</small></div>
+          <div class="map-key"><div><small class="map-limits" style="margin-left:0">Limites: CAOP · DGT</small></div><small class="map-sources">Fontes: INE e PORDATA</small></div>
         </section>
       </div>
 

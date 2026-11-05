@@ -487,8 +487,19 @@ if(mapNodes) municipalityMapShapes.forEach(({ name, path, label:labelPos }) => {
   g.append(shape,title,label); mapNodes.appendChild(g); g.addEventListener("click",()=>setTerritory(name)); g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();setTerritory(name);}});
 });
 
+// Minimapa (canto superior esquerdo): a região inteira numa só forma, com o nome "Alto Minho" e sem interação.
+const miniMap = document.querySelector("#mini-map"), miniShapes = document.querySelector("#mini-map-shapes");
+if(miniMap && miniShapes){
+  const ns="http://www.w3.org/2000/svg";
+  municipalityMapShapes.forEach(({ path }) => { const p=document.createElementNS(ns,"path"); p.setAttribute("d",path); p.setAttribute("fill-rule","evenodd"); miniShapes.appendChild(p); });
+  const b=miniShapes.getBBox(); miniMap.querySelector("svg").setAttribute("viewBox",`${b.x-2} ${b.y-2} ${b.width+4} ${b.height+4}`);
+  const t=document.createElementNS(ns,"text"); t.setAttribute("x",b.x+b.width/2); t.setAttribute("y",b.y+b.height/2); t.setAttribute("font-size",b.width*0.06); t.textContent="Alto Minho"; miniMap.querySelector("svg").appendChild(t);
+  miniMap.setAttribute("role","button"); miniMap.setAttribute("tabindex","0"); miniMap.setAttribute("aria-label","Selecionar Alto Minho");
+  miniMap.addEventListener("click",()=>setTerritory("Alto Minho")); miniMap.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();setTerritory("Alto Minho");}});
+}
+
 // Muda o território ativo: guarda a escolha, atualiza o título, o select e o mapa, e volta a desenhar tudo.
-function setTerritory(name){ selectedTerritory=name; localStorage.setItem("observatorio-territory",name); if(select)select.value=name; const title=document.querySelector("#territory-title");if(title)title.textContent=name; document.querySelectorAll(".municipality-node").forEach(n=>n.classList.toggle("active",n.dataset.territory===name)); render(); }
+function setTerritory(name){ selectedTerritory=name; localStorage.setItem("observatorio-territory",name); if(select)select.value=name; const title=document.querySelector("#territory-title");if(title)title.textContent=name; document.querySelectorAll(".municipality-node").forEach(n=>n.classList.toggle("active",n.dataset.territory===name)); if(miniMap)miniMap.classList.toggle("active",name==="Alto Minho"); render(); }
 
 // Desenha os 4 números grandes do topo (população, envelhecimento, preço m², saldo migratório).
 function renderKpis(data){

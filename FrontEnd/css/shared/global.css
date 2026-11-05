@@ -138,6 +138,13 @@ body[data-page="metodologia"] .method-section { margin-bottom: 0; }
 .map-caption span { font-family: var(--font-body); font-size: 23px; }
 .map-caption p { max-width: 170px; color: var(--muted); font-size: 12px; line-height: 1.45; }
 .region-map { position: relative; z-index: 2; display: block; width: 100%; height: 560px; margin-top: 2px; overflow: visible; }
+.mini-map { position: absolute; left: 24px; top: 72px; z-index: 3; width: 20%; min-width: 130px; cursor: pointer; outline: none; }
+.mini-map svg { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; }
+.mini-map path { fill: #a9c8ea; stroke: #a9c8ea; stroke-width: 2; stroke-linejoin: round; transition: fill .18s ease, stroke .18s ease; }
+.mini-map:hover path, .mini-map:focus-visible path { fill: #8fb4de; stroke: #8fb4de; }
+.mini-map.active path { fill: #5f93cf; stroke: #5f93cf; }
+.mini-map text { fill: var(--forest); font-weight: 600; text-anchor: middle; dominant-baseline: middle; paint-order: stroke; stroke: rgba(255,255,255,.55); stroke-width: 4px; stroke-linejoin: round; pointer-events: none; }
+.mini-map.active text { fill: #fff; stroke: rgba(47,68,104,.45); }
 .municipality-node { cursor: pointer; outline: none; }
 .municipality-node path { fill: #a9c8ea; stroke: #fff; stroke-width: 2.2; vector-effect: non-scaling-stroke; transition: fill .18s ease, filter .18s ease; }
 .municipality-node:hover path, .municipality-node:focus path { filter: brightness(.94) drop-shadow(0 3px 3px rgba(47,68,104,.18)); }
