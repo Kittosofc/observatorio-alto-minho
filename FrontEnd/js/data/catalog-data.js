@@ -431,14 +431,5 @@ const indicatorCatalog = [
     "source": "Pordata",
     "url": "https://www.pordata.pt/municipios/habitantes+por+medico+e+farmaceutico-495",
     "year": "2025"
-  },
-  {
-    "name": "Pirâmide etária",
-    "domain": "Demografia",
-    "theme": "Dinâmica populacional",
-    "category": "Estrutura da População",
-    "source": "Pordata",
-    "url": "https://www.pordata.pt/municipios/populacao+residente+do+sexo+feminino+total+e+por+grupo+etario-453",
-    "year": "2025"
   }
 ];

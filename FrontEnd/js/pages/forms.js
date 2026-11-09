@@ -1,5 +1,5 @@
 const COLORS = ['#4a78b0','#3a8458','#e6c565','#ef9a93','#2f4468','#b7d3ee','#bfe0c7','#a87c10','#c4564d','#667790','#f7e3a3','#f2b0aa'];
-const drop = document.getElementById('drop');
+const openBtn = document.getElementById('open-upload');
 const fileInput = document.getElementById('file');
 const msg = document.getElementById('msg');
 const content = document.getElementById('content');
@@ -7,10 +7,7 @@ const clearBtn = document.getElementById('clear');
 let charts = [];
 let lastRows = null;
 
-drop.addEventListener('click', () => fileInput.click());
-['dragover','dragenter'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.add('over'); }));
-['dragleave','drop'].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove('over'); }));
-drop.addEventListener('drop', ev => { if (ev.dataTransfer.files[0]) load(ev.dataTransfer.files[0]); });
+openBtn.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', () => { if (fileInput.files[0]) load(fileInput.files[0]); });
 const terrSel = document.getElementById('territory-select');
 if (terrSel) terrSel.addEventListener('change', () => lastRows && safeRenderForms(lastRows));

@@ -373,9 +373,20 @@ body[data-page="metodologia"] .page-workspace {
 .footer-social svg { width: 18px; height: 18px; fill: currentColor; }
 body.powerbi-embedded .site-footer { display: none; }
 @media (max-width: 760px) { .site-footer { margin-left: 0; padding: 24px 18px; flex-direction: column; align-items: flex-start; } }
-/* Modo admin provisório (botão no fundo da barra lateral) */
-.admin-toggle { margin-top: 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; transition: .2s ease; }
+/* Acesso admin (botão no fundo da barra lateral) */
+.admin-toggle { box-sizing: border-box; text-decoration: none; margin-top: 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; transition: .2s ease; }
 .admin-toggle b { font-weight: 600; color: var(--ink); }
 .admin-toggle.on { border-color: #2e7d46; background: #e4f2e8; }
 .admin-toggle.on b { color: #2e7d46; }
 body:not([data-admin="on"]) #drop, body:not([data-admin="on"]) #clear { display: none !important; }
+
+/* Controlos de administrador (só visíveis com sessão admin) */
+.admin-box[hidden] { display: none !important; }
+.admin-box { margin: 0 0 20px; padding: 16px; border: 1px dashed var(--forest-2); border-radius: 12px; background: #fff; display: grid; gap: 10px; max-width: 520px; }
+.admin-box h3 { margin: 0; font-family: var(--font-title); font-size: 1rem; color: var(--forest); }
+.admin-box input, .admin-box textarea { width: 100%; padding: 9px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+.admin-btn, .admin-del { padding: 9px 14px; border: 0; border-radius: 8px; background: var(--forest); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+.admin-del { background: var(--red-ink); font-size: 12px; margin-top: 8px; }
+.admin-msg { font-size: .85rem; color: var(--red-ink); margin: 0; }
+.admin-vis { display: inline-block; margin-right: 8px; vertical-align: middle; }
+.catalog-row.is-hidden td { opacity: .45; }

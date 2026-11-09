@@ -380,15 +380,8 @@ const catalogOverrides = {
     dimension:"Habitantes por farmacêutico",
     area:"Saúde",
     tab:"Saúde"
-  },
-  "Pirâmide etária": {
-    name:"Pirâmide etária",
-    description:"Peso da população idosa (65 ou mais anos) no total da população residente.",
-    dimension:"População com 65 ou mais anos (% do total) — topo da pirâmide etária",
-    area:"Demografia",
-    sub:"População",
-    tab:"Demografia"
   }
+
 };
 
 // ===== 2. ÁREAS (separadores) =====
@@ -459,7 +452,7 @@ const themes = {
 // ===== 5. ESTADO E ELEMENTOS DA PÁGINA =====
 // select = escolha do território; compareSelect = escolha do indicador (página Comparar); mapNodes = mapa SVG.
 // O território e o indicador escolhidos ficam guardados no localStorage para persistirem entre páginas.
-const select = document.querySelector("#territory-select"), compareSelect = document.querySelector("#compare-indicator"), mapNodes = document.querySelector("#map-nodes");
+const select = document.querySelector("#territory-select"), compareSelect = document.querySelector("#compare-indicator"), compareSelect2 = document.querySelector("#compare-indicator-2"), mapNodes = document.querySelector("#map-nodes");
 const savedTerritory = localStorage.getItem("observatorio-territory");
 const savedIndicatorKey = localStorage.getItem("observatorio-indicator");
 let selectedTerritory = territoryNames.includes(savedTerritory) ? savedTerritory : "Alto Minho";
@@ -475,7 +468,8 @@ const formattedValue = (item, value) => `${item.prefix || ""}${format(value)}${i
 if(select) territoryNames.forEach(name => { const option=document.createElement("option"); option.value=name; option.textContent=name; select.appendChild(option); });
 // Preenche o <select> de indicadores da página Comparar com os 50 indicadores.
 if(compareSelect){catalog.forEach(item => { const option=document.createElement("option"); option.value=item.key; option.textContent=item.name; compareSelect.appendChild(option); });compareSelect.value=selectedIndicatorKey;}
-// Desenha o mapa: um <path> SVG por município, com nome, clique e teclado (Enter/Espaço) para o selecionar.
+// Segundo indicador (opcional) do Gráfico 1: "Nenhum" + os mesmos indicadores.
+if(compareSelect2){compareSelect2.innerHTML='<option value="">— Nenhum —</option>';catalog.forEach(item => { const option=document.createElement("option"); option.value=item.key; option.textContent=item.name; compareSelect2.appendChild(option); });const saved2=localStorage.getItem("observatorio-indicator-2");compareSelect2.value=catalog.some(i=>i.key===saved2)?saved2:"";}
 // Posições de etiqueta corrigidas à mão (a original ficava sobre a fronteira e era tapada pelo vizinho).
 const mapLabelOverrides = { "Ponte da Barca":[402,228] };
 if(mapNodes) municipalityMapShapes.forEach(({ name, path, label:labelPos }) => {
@@ -520,9 +514,17 @@ function renderTheme(data){
 function renderComparison(){
   const chart=document.querySelector("#comparison-chart");if(!compareSelect||!chart)return;
   const item=catalog.find(entry=>entry.key===compareSelect.value)||catalog[0];
+  const item2=compareSelect2&&compareSelect2.value&&compareSelect2.value!==item.key?catalog.find(entry=>entry.key===compareSelect2.value):null;
   const rows=territoryNames.slice(1).map(name=>[name,item.values[name]]).sort((a,b)=>(b[1]??-Infinity)-(a[1]??-Infinity));
-  const max=Math.max(...rows.map(([,value])=>Math.abs(value??0)),1); chart.setAttribute("aria-label",`${item.name}, ${item.year}, ${item.dimension}`);
-  chart.innerHTML=rows.map(([name,value])=>`<div class="bar-row ${name===selectedTerritory?'selected':''}"><div class="bar-label" title="${name}">${name}</div><div class="bar-track"><div class="bar-fill${value<0?' negative':''}" style="--bar:${value==null?0:Math.max(2,Math.abs(value)/max*100)}%"></div></div><div class="bar-value">${formattedValue(item,value)}</div></div>`).join("");
+  const maxOf=it=>Math.max(...territoryNames.slice(1).map(name=>Math.abs(it.values[name]??0)),1);
+  const max=maxOf(item), max2=item2?maxOf(item2):1;
+  const bar=(it,value,m,cls)=>`<div class="bar-track"><div class="bar-fill${cls}${value<0&&!item2?' negative':''}" style="--bar:${value==null?0:Math.max(2,Math.abs(value)/m*100)}%"></div></div>`;
+  chart.setAttribute("aria-label",`${item.name}, ${item.year}${item2?` e ${item2.name}, ${item2.year}`:`, ${item.dimension}`}`);
+  const legend=item2?`<div class="compare-legend"><span><i class="dot a"></i>${item.name} (${item.year})</span><span><i class="dot b"></i>${item2.name} (${item2.year})</span></div>`:"";
+  chart.innerHTML=legend+rows.map(([name,value])=>{
+    const v2=item2?item2.values[name]:null;
+    return `<div class="bar-row ${item2?'dual':''} ${name===selectedTerritory?'selected':''}"><div class="bar-label" title="${name}">${name}</div><div class="bar-tracks">${bar(item,value,max,"")}${item2?bar(item2,v2,max2," b"):""}</div><div class="bar-values"><div class="bar-value">${formattedValue(item,value)}</div>${item2?`<div class="bar-value b">${formattedValue(item2,v2)}</div>`:""}</div></div>`;
+  }).join("");
 }
 
 // Página Comparar: gráfico de barras agrupadas que compara os anos de um indicador (do mais antigo ao mais recente),
@@ -575,16 +577,18 @@ function renderYearComparison(){
   const bandW=(W-left-right)/Math.max(years.length-1,1);
   const bands=years.map(year=>`<rect class="year-band" data-year="${year}" x="${x(year)-bandW/2}" y="${top}" width="${bandW}" height="${H-top-bottom}" fill="transparent"/>`).join("");
 
-  // Legenda clicável: liga/desliga cada município.
-  const legend=municipalities.map((name,i)=>`<button type="button" class="line-toggle ${hiddenLines.has(name)?"off":""}" data-line="${name}"><i style="background:${lineColors[i%lineColors.length]}"></i>${name}</button>`).join("");
-  const note=hasSel?`Destacado: <strong>${selectedTerritory}</strong> · clique num município da legenda para o mostrar/esconder · passe o rato num ano para ver os valores.`:`Escolha um município no menu lateral para o destacar · clique na legenda para mostrar/esconder · passe o rato num ano para ver os valores.`;
+  // Seletor de municípios: caixas de seleção organizadas em grelha, com "Todos" / "Nenhum".
+  const boxes=municipalities.map((name,i)=>`<label class="muni-check ${hiddenLines.has(name)?"off":""}"><input type="checkbox" data-line="${name}" ${hiddenLines.has(name)?"":"checked"}><span class="box" style="--c:${lineColors[i%lineColors.length]}"></span>${name}</label>`).join("");
+  const legend=`<div class="muni-picker"><div class="muni-picker-head"><span>Municípios <b>${visible.length}/${municipalities.length}</b></span></div><div class="muni-grid">${boxes}</div></div>`;
+  const note=hasSel?`Destacado: <strong>${selectedTerritory}</strong> · use as caixas para mostrar/esconder municípios · passe o rato num ano para ver os valores.`:`Escolha um município no menu lateral para o destacar · use as caixas para mostrar/esconder municípios · passe o rato num ano para ver os valores.`;
 
   chart.setAttribute("aria-label",`Evolução de ${item.name}, ${years[0]} a ${years[years.length-1]}`);
   chart.style.position="relative";
-  chart.innerHTML=`<div class="line-legend">${legend}</div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução de ${item.name} entre ${years.join(", ")}">${grid}${xlabels}${lines}<line class="hover-line" y1="${top}" y2="${H-bottom}" hidden/>${bands}</svg><div class="line-tip" hidden></div><p class="history-note">${note}</p>`;
+  chart.innerHTML=`${legend}<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução de ${item.name} entre ${years.join(", ")}">${grid}${xlabels}${lines}<line class="hover-line" y1="${top}" y2="${H-bottom}" hidden/>${bands}</svg><div class="line-tip" hidden></div><p class="history-note">${note}</p>`;
 
   const tip=chart.querySelector(".line-tip"), svg=chart.querySelector("svg"), vline=chart.querySelector(".hover-line");
-  chart.querySelector(".line-legend").addEventListener("click",e=>{const b=e.target.closest("[data-line]");if(!b)return;const n=b.dataset.line;hiddenLines.has(n)?hiddenLines.delete(n):hiddenLines.add(n);window.renderYearComparison();});
+  const picker=chart.querySelector(".muni-picker");
+  picker.addEventListener("change",e=>{const n=e.target.dataset.line;if(!n)return;e.target.checked?hiddenLines.delete(n):hiddenLines.add(n);window.renderYearComparison();chart.querySelector(`[data-line="${n}"]`)?.focus();});
   svg.addEventListener("mousemove",e=>{
     const band=e.target.closest(".year-band"); if(!band){tip.hidden=true;vline.hidden=true;return;}
     const year=band.dataset.year;
@@ -599,6 +603,7 @@ function renderYearComparison(){
 
 // Tabela de indicadores. Sem pesquisa mostra só os da área ativa; com pesquisa procura em todos.
 // Clicar numa linha escolhe o indicador (o detalhe de cima atualiza); duplo clique faz scroll até ele.
+let hiddenIndicators=new Set(); // indicadores escondidos pelo admin (guardados em backend/php/data/indicadores.json)
 function renderCatalog(query=""){
   const body=document.querySelector("#catalog-body"),empty=document.querySelector("#catalog-empty"),caption=document.querySelector("#catalog-caption");if(!body||!empty)return;
   // Com pesquisa, procura em todos os indicadores; sem pesquisa, mostra só os da área escolhida.
@@ -607,11 +612,12 @@ function renderCatalog(query=""){
     ? catalog.filter(item=>norm(`${item.name} ${item.area} ${item.year} ${item.source} ${item.dimension}`).includes(normalized))
     : catalog;
   // Filtro por botões de categoria (e subcategoria da Demografia); a pesquisa respeita o filtro.
-  const filtered=matches.filter(item=>(selectedCategory==="Todas"||item.area===selectedCategory)&&(!selectedSub||item.sub===selectedSub));
+  const adm=document.body.dataset.admin==="on";
+  const filtered=matches.filter(item=>(selectedCategory==="Todas"||item.area===selectedCategory)&&(!selectedSub||item.sub===selectedSub)).filter(item=>adm||!hiddenIndicators.has(item.rawName));
   const label=selectedCategory==="Todas"?"todas as categorias":(selectedSub?`${selectedCategory} · ${selectedSub}`:selectedCategory);
   if(caption)caption.textContent=normalized?`Resultados da pesquisa · ${label} · ${filtered.length}`:`Indicadores · ${label} · ${filtered.length}`;
-  body.innerHTML=filtered.map(item=>`<tr class="catalog-row ${item.key===selectedIndicatorKey?'active':''}" tabindex="0" role="button" data-indicator-key="${item.key}" aria-label="Ver ${item.name}"><td>${item.name}</td><td>${item.area}</td><td>${item.year}</td><td>${item.source}</td></tr>`).join(""); empty.hidden=filtered.length>0;
-  document.querySelectorAll(".catalog-row").forEach(row=>{const choose=scrollToDetail=>selectCatalogIndicator(row.dataset.indicatorKey,scrollToDetail);row.addEventListener("click",()=>choose(false));row.addEventListener("dblclick",()=>choose(true));row.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();choose(false);}});});
+  body.innerHTML=filtered.map(item=>`<tr class="catalog-row ${item.key===selectedIndicatorKey?'active':''}${hiddenIndicators.has(item.rawName)?' is-hidden':''}" tabindex="0" role="button" data-indicator-key="${item.key}" aria-label="Ver ${item.name}"><td>${adm?`<label class="admin-vis" title="Mostrar aos utilizadores"><input type="checkbox" data-vis-key="${item.key}" ${hiddenIndicators.has(item.rawName)?'':'checked'}></label>`:''}${item.name}</td><td>${item.area}</td><td>${item.year}</td><td>${item.source}</td></tr>`).join(""); empty.hidden=filtered.length>0;
+  document.querySelectorAll(".catalog-row").forEach(row=>{const choose=scrollToDetail=>selectCatalogIndicator(row.dataset.indicatorKey,scrollToDetail);row.addEventListener("click",e=>{if(e.target.closest(".admin-vis"))return;choose(false);});row.addEventListener("dblclick",e=>{if(e.target.closest(".admin-vis"))return;choose(true);});row.addEventListener("keydown",event=>{if(event.target.closest(".admin-vis"))return;if(event.key==="Enter"||event.key===" "){event.preventDefault();choose(false);}});});
 }
 
 // Botões de categoria (e subcategoria da Demografia) por cima da tabela de indicadores.
@@ -665,6 +671,7 @@ function setTheme(name){
 document.querySelectorAll(".theme").forEach(button=>button.addEventListener("click",()=>setTheme(button.dataset.theme)));
 // Página Comparar: ao mudar o indicador, guarda a escolha e redesenha o gráfico.
 if(compareSelect)compareSelect.addEventListener("change",()=>{selectedIndicatorKey=compareSelect.value;localStorage.setItem("observatorio-indicator",selectedIndicatorKey);renderComparison();renderYearComparison();});
+if(compareSelect2)compareSelect2.addEventListener("change",()=>{localStorage.setItem("observatorio-indicator-2",compareSelect2.value);renderComparison();});
 // Caixa de pesquisa: refiltra a tabela a cada letra escrita.
 const searchInput=document.querySelector("#indicator-search");if(searchInput)searchInput.addEventListener("input",e=>renderCatalog(e.target.value));
 // Botão "Comparar municípios": guarda o indicador e abre a página Comparar.
@@ -704,26 +711,55 @@ renderCategoryButtons(); renderCatalog(); setTerritory(selectedTerritory);
   main ? main.after(el) : document.body.appendChild(el);
 })();
 
-// ===== 9. MODO ADMIN (provisório) =====
-// Botão no fundo da barra lateral. ON = admin (pode carregar ficheiros); OFF = utilizador (só vê).
-// Guardado no localStorage. Provisório: ainda não há login a sério.
-(function adminToggle() {
+// ===== 9. ACESSO ADMIN =====
+// Botão no fundo da barra lateral. Sem sessão: leva ao login PHP. Com sessão (backend/php/status.php): mostra "Sair".
+// Só o admin vê a área de carregar ficheiros (body[data-admin="on"]).
+(function adminAccess() {
   const rail = document.querySelector(".rail");
   if (!rail) return;
-  const read = () => { try { return localStorage.getItem("observatorio-admin") === "on"; } catch { return false; } };
-  const btn = document.createElement("button");
-  btn.type = "button"; btn.className = "admin-toggle";
+  const base = location.pathname.includes("/FrontEnd/html/") ? "../../Backend/php/" : "Backend/php/";
+  window.observatorioBackend = base;
+  const btn = document.createElement("a");
+  btn.className = "admin-toggle";
   const apply = on => {
     document.body.dataset.admin = on ? "on" : "off";
     btn.classList.toggle("on", on);
-    btn.setAttribute("aria-pressed", String(on));
-    btn.innerHTML = `<span>Modo admin (provisório)</span><b>${on ? "on" : "off"}</b>`;
+    btn.href = base + (on ? "logout.php" : "login.php");
+    btn.innerHTML = on ? `<span>Administrador</span><b>sair</b>` : `<span>Entrar como administrador</span><b>→</b>`;
   };
-  btn.addEventListener("click", () => {
-    const on = document.body.dataset.admin !== "on";
-    try { localStorage.setItem("observatorio-admin", on ? "on" : "off"); } catch {}
-    apply(on);
-  });
-  apply(read());
+  apply(false);
   rail.appendChild(btn);
+  fetch(base + "status.php", { credentials: "same-origin" })
+    .then(r => r.json()).then(d => {
+      window.observatorioAdmin = d;
+      apply(!!d.admin);
+      document.dispatchEvent(new Event("admin-ready"));
+    }).catch(() => {});
+})();
+
+// ===== 10. INDICADORES VISÍVEIS =====
+// Utilizadores só veem os indicadores não escondidos. O admin vê todos, com caixa de seleção (visível/escondido).
+(function indicatorVisibility() {
+  const tbody = document.querySelector("#catalog-body");
+  if (!tbody) return;
+  const api = (window.observatorioBackend || "Backend/php/") + "indicadores.php";
+  const rerender = () => renderCatalog(document.querySelector("#indicator-search")?.value || "");
+  fetch(api, { credentials: "same-origin" })
+    .then(r => r.json()).then(d => { hiddenIndicators = new Set(d.hidden || []); rerender(); }).catch(() => {});
+  document.addEventListener("admin-ready", rerender);
+  tbody.addEventListener("change", e => {
+    const cb = e.target.closest("[data-vis-key]");
+    if (!cb) return;
+    const item = catalog.find(i => i.key === cb.dataset.visKey);
+    if (!item) return;
+    cb.checked ? hiddenIndicators.delete(item.rawName) : hiddenIndicators.add(item.rawName);
+    cb.closest("tr").classList.toggle("is-hidden", !cb.checked);
+    const fd = new FormData();
+    fd.append("action", "set");
+    fd.append("hidden", JSON.stringify([...hiddenIndicators]));
+    fd.append("csrf", window.observatorioAdmin.csrf);
+    fetch(api, { method: "POST", body: fd, credentials: "same-origin" })
+      .then(async r => { if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || "erro"); } })
+      .catch(e => alert("Não foi possível guardar a alteração: " + e.message));
+  });
 })();

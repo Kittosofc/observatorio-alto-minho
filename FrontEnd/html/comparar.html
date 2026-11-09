@@ -50,9 +50,14 @@
       <section class="card" id="comparar">
         <div class="card-head">
           <div><p class="overline">Gráfico 1</p><h2>Valor por município</h2></div>
-          <label class="compare-control">Indicador a comparar
-            <select id="compare-indicator" aria-label="Indicador a comparar"></select>
-          </label>
+          <div class="compare-controls">
+            <label class="compare-control">Indicador a comparar
+              <select id="compare-indicator" aria-label="Indicador a comparar"></select>
+            </label>
+            <label class="compare-control">Segundo indicador (opcional)
+              <select id="compare-indicator-2" aria-label="Segundo indicador a comparar"></select>
+            </label>
+          </div>
         </div>
         <div class="chart" id="comparison-chart" aria-label="Comparação dos municípios"></div>
       </section>
