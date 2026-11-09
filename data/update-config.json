@@ -1,0 +1,242 @@
+{
+  "territories": [
+    "Alto Minho",
+    "Arcos de Valdevez",
+    "Caminha",
+    "Melgaço",
+    "Monção",
+    "Paredes de Coura",
+    "Ponte da Barca",
+    "Ponte de Lima",
+    "Valença",
+    "Viana do Castelo",
+    "Vila Nova de Cerveira"
+  ],
+  "ine": {
+    "Superfície Km2": {
+      "code": "0011866",
+      "filters": {}
+    },
+    "Preço médio m²": {
+      "code": "0012255",
+      "filters": {
+        "dim_3": "H1"
+      }
+    },
+    "Rendimento médio": {
+      "code": "0012649",
+      "filters": {
+        "dim_3": "TOT",
+        "dim_4": "T"
+      }
+    },
+    "Taxa de analfabetismo": {
+      "code": "0012273",
+      "filters": {
+        "dim_3": "T"
+      }
+    },
+    "Proporção de pop. residente em movimentos pendulares": {
+      "code": "0011655",
+      "filters": {}
+    },
+    "% famílias monoparentais": {
+      "code": "0012405",
+      "filters": {
+        "dim_3": "T",
+        "dim_4": "T",
+        "dim_5": "T"
+      },
+      "query": "&Dim1=S7A2021&Dim2=111,1601,1602,1603,1604,1605,1606,1607,1608,1609,1610"
+    }
+  },
+  "pordataFixed": {
+    "Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino": {
+      "positions": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "unit": "estabelecimentos",
+      "dimension": "Soma dos 5 níveis de ensino (cada estabelecimento conta uma vez por cada ensino que ministra)",
+      "prefix": "",
+      "suffix": ""
+    },
+    "Freguesias": {
+      "positions": [
+        0
+      ],
+      "unit": "freguesias",
+      "dimension": "Número de freguesias",
+      "prefix": "",
+      "suffix": "",
+      "catalog": [
+        "Contexto Geográfico",
+        "",
+        "Divisão administrativa"
+      ]
+    },
+    "Índice de dependência total": {
+      "positions": [
+        0
+      ],
+      "unit": "índice",
+      "dimension": "Jovens e idosos por 100 pessoas em idade ativa",
+      "prefix": "",
+      "suffix": "",
+      "catalog": [
+        "Demografia",
+        "Dinâmica populacional",
+        "Estrutura da População"
+      ]
+    },
+    "População residente: total e por sexo": {
+      "positions": [
+        0
+      ],
+      "unit": "pessoas",
+      "dimension": "Total (estimativa a 31 de dezembro)",
+      "prefix": "",
+      "suffix": "",
+      "catalog": [
+        "Demografia",
+        "Dinâmica populacional",
+        "Distribuição da população"
+      ]
+    },
+    "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo": {
+      "positions": [
+        0
+      ],
+      "unit": "€",
+      "dimension": "Ganho médio mensal — total",
+      "prefix": "€ ",
+      "suffix": "",
+      "catalog": [
+        "Habitação",
+        "Rendimentos",
+        "Vulnerabilidade"
+      ]
+    },
+    "Beneficiários do Rendimento Mínimo Garantido e Rendimento Social de Inserção da Segurança Social: total e por grupo etário": {
+      "positions": [
+        0
+      ],
+      "unit": "pessoas",
+      "dimension": "Total (todos os grupos etários)",
+      "prefix": "",
+      "suffix": "",
+      "catalog": [
+        "Proteção Social",
+        "Acesso",
+        "Cuidados"
+      ]
+    },
+    "População estrangeira com estatuto legal de residente: total e por sexo": {
+      "positions": [
+        0
+      ],
+      "unit": "pessoas",
+      "dimension": "Total",
+      "prefix": "",
+      "suffix": "",
+      "catalog": [
+        "Proteção Social",
+        "População imigrante",
+        "População imigrante"
+      ]
+    },
+    "Saldo Total": {
+      "positions": [
+        0
+      ],
+      "unit": "pessoas",
+      "dimension": "Saldo total anual (saldo natural + saldo migratório)",
+      "prefix": "",
+      "suffix": "",
+      "catalog": [
+        "Demografia",
+        "Dinâmica populacional",
+        "Distribuição da população"
+      ]
+    }
+  },
+  "breakdowns": [
+    {
+      "name": "População estrangeira com estatuto legal de residente: total e por algumas nacionalidades",
+      "file": "101.xlsx",
+      "label": "nacionalidade",
+      "renames": {}
+    },
+    {
+      "name": "População estrangeira com estatuto legal de residente: total e por sexo",
+      "file": "99.xlsx",
+      "label": "sexo",
+      "renames": {
+        "Masculino": "Homens",
+        "Feminino": "Mulheres"
+      }
+    },
+    {
+      "name": "População residente: total e por sexo",
+      "file": "357.xlsx",
+      "label": "sexo",
+      "renames": {
+        "Masculino": "Homens",
+        "Feminino": "Mulheres",
+        "Homens": "Homens",
+        "Mulheres": "Mulheres"
+      }
+    },
+    {
+      "name": "Obitos por algumas causas de morte (%)",
+      "file": "373.xlsx",
+      "label": "causa de morte",
+      "renames": {}
+    },
+    {
+      "name": "Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino",
+      "file": "213.xlsx",
+      "label": "nível de ensino",
+      "renames": {}
+    },
+    {
+      "name": "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo",
+      "file": "282.xlsx",
+      "label": "sexo",
+      "renames": {
+        "Masculino": "Homens",
+        "Feminino": "Mulheres"
+      }
+    },
+    {
+      "name": "Profissionais de saúde: médicos, dentistas, enfermeiros e farmacêuticos",
+      "file": "442.xlsx",
+      "label": "profissão",
+      "renames": {}
+    },
+    {
+      "name": "Desempregados inscritos nos centros de emprego e de formação profissional (média anual): total e por grupo etário",
+      "file": "221.xlsx",
+      "label": "grupo etário",
+      "renames": {}
+    },
+    {
+      "name": "Beneficiários do Rendimento Mínimo Garantido e Rendimento Social de Inserção da Segurança Social: total e por sexo",
+      "file": "513.xlsx",
+      "label": "sexo",
+      "renames": {
+        "Masculino": "Homens",
+        "Feminino": "Mulheres",
+        "Homens": "Homens",
+        "Mulheres": "Mulheres"
+      }
+    }
+  ],
+  "breakdownsWithoutTotal": [
+    "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo",
+    "Obitos por algumas causas de morte (%)"
+  ]
+}

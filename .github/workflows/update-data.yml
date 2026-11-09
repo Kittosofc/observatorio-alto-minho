@@ -10,6 +10,7 @@ on:
       - "scripts/update-data.py"
       - "scripts/download-pordata.mjs"
       - "data/pordata-sources.json"
+      - "data/update-config.json"
   schedule:
     - cron: "15 17 * * 1"
 

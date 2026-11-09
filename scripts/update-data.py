@@ -25,76 +25,16 @@ PORDATA_DIRECTORY = ROOT / ".cache" / "pordata"
 REPORT_PATH = ROOT / "data" / "update-report.json"
 HISTORY_YEARS = 1000  # nº máximo de anos guardados por indicador (1000 = todos os anos disponíveis)
 
-TERRITORIES = [
-    "Alto Minho",
-    "Arcos de Valdevez",
-    "Caminha",
-    "Melgaço",
-    "Monção",
-    "Paredes de Coura",
-    "Ponte da Barca",
-    "Ponte de Lima",
-    "Valença",
-    "Viana do Castelo",
-    "Vila Nova de Cerveira",
-]
+CONFIG_PATH = ROOT / "data" / "update-config.json"
 
-# Estabelecimentos por nível de ensino (Pordata 213): o ficheiro tem uma coluna por nível, em cada ano
-# (0 = pré-escolar, 1 = 1.º ciclo, 2 = 2.º ciclo, 3 = 3.º ciclo, 4 = secundário). O indicador é a SOMA dos 5 níveis,
-# com posições fixas (sem procurar a combinação mais parecida). Segundo a Pordata, cada estabelecimento é contado
-# tantas vezes quantos os ensinos que ministra.
-PORDATA_FIXED_POSITIONS = {
-    "Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino": (0, 1, 2, 3, 4),
-}
-
-# Dados base de cada indicador de posição fixa, usados para criar a entrada em indicator-values.js (e em
-# catalog-data.js) quando ainda não existe. "catalog" = domínio/tema/categoria no catálogo.
-_PF = (0,)  # 1.ª coluna de cada ano = "Total" nos ficheiros "total e por sexo / grupo etário" da Pordata
-_ENSINO = "Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino"
-_RSI = "Beneficiários do Rendimento Mínimo Garantido e Rendimento Social de Inserção da Segurança Social: total e por grupo etário"
-_ESTR = "População estrangeira com estatuto legal de residente: total e por sexo"
-_SEXO = "População residente: total e por sexo"
-_GANHO = "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo"
-PORDATA_FIXED_POSITIONS.update({
-    "Freguesias": _PF,
-    "Índice de dependência total": _PF,
-    _SEXO: _PF,
-    _GANHO: _PF,
-    _RSI: _PF,
-    _ESTR: _PF,
-    "Saldo Total": _PF,
-})
-PORDATA_FIXED_ENTRIES = {
-    _ENSINO: {"unit": "estabelecimentos", "dimension": "Soma dos 5 níveis de ensino (cada estabelecimento conta uma vez por cada ensino que ministra)", "prefix": "", "suffix": ""},
-    "Freguesias": {"unit": "freguesias", "dimension": "Número de freguesias", "prefix": "", "suffix": "",
-                   "catalog": ("Contexto Geográfico", "", "Divisão administrativa")},
-    "Índice de dependência total": {"unit": "índice", "dimension": "Jovens e idosos por 100 pessoas em idade ativa", "prefix": "", "suffix": "",
-                                    "catalog": ("Demografia", "Dinâmica populacional", "Estrutura da População")},
-    _SEXO: {"unit": "pessoas", "dimension": "Total (estimativa a 31 de dezembro)", "prefix": "", "suffix": "",
-            "catalog": ("Demografia", "Dinâmica populacional", "Distribuição da população")},
-    _GANHO: {"unit": "€", "dimension": "Ganho médio mensal — total", "prefix": "€ ", "suffix": "",
-             "catalog": ("Habitação", "Rendimentos", "Vulnerabilidade")},
-    _RSI: {"unit": "pessoas", "dimension": "Total (todos os grupos etários)", "prefix": "", "suffix": "",
-           "catalog": ("Proteção Social", "Acesso", "Cuidados")},
-    _ESTR: {"unit": "pessoas", "dimension": "Total", "prefix": "", "suffix": "",
-            "catalog": ("Proteção Social", "População imigrante", "População imigrante")},
-    "Saldo Total": {"unit": "pessoas", "dimension": "Saldo total anual (saldo natural + saldo migratório)", "prefix": "", "suffix": "",
-                    "catalog": ("Demografia", "Dinâmica populacional", "Distribuição da população")},
-}
-
-INE_DIRECT = {
-    "Superfície Km2": {"code": "0011866", "filters": {}},
-    "Preço médio m²": {"code": "0012255", "filters": {"dim_3": "H1"}},
-    "Rendimento médio": {"code": "0012649", "filters": {"dim_3": "TOT", "dim_4": "T"}},
-    "Taxa de analfabetismo": {"code": "0012273", "filters": {"dim_3": "T"}},
-    "Proporção de pop. residente em movimentos pendulares": {"code": "0011655", "filters": {}},
-    # Indicador grande: o INE exige o período (Dim1) e os territórios (Dim2) no pedido.
-    "% famílias monoparentais": {
-        "code": "0012405",
-        "filters": {"dim_3": "T", "dim_4": "T", "dim_5": "T"},
-        "query": "&Dim1=S7A2021&Dim2=111,1601,1602,1603,1604,1605,1606,1607,1608,1609,1610",
-    },
-}
+# Configuração dos indicadores (territórios, INE, Pordata de posição fixa, detalhes por categoria): data/update-config.json.
+_config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+TERRITORIES = _config["territories"]
+INE_DIRECT = _config["ine"]  # nome do indicador -> código INE, filtros e (opcional) query extra
+PORDATA_FIXED_POSITIONS = {name: tuple(e["positions"]) for name, e in _config["pordataFixed"].items()}  # colunas a usar em cada ano
+PORDATA_FIXED_ENTRIES = {name: {k: v for k, v in e.items() if k != "positions"} for name, e in _config["pordataFixed"].items()}  # unidade, dimensão, catálogo
+BREAKDOWNS = tuple((b["name"], b["file"], b["label"], b.get("renames", {})) for b in _config["breakdowns"])
+BREAKDOWNS_WITHOUT_TOTAL = set(_config["breakdownsWithoutTotal"])  # indicadores sem valor "total" no detalhe
 
 
 def normalized(value: object) -> str:
@@ -581,25 +521,6 @@ def update_pordata(values_by_name: dict, report: list[dict]) -> int:
 
 # Indicadores com detalhe por categoria: (nome, ficheiro Pordata, rótulo da categoria, renomear categorias).
 # Ao adicionar um indicador novo com detalhe, acrescentar aqui e o update-data.py passa a atualizá-lo.
-BREAKDOWNS = (
-    ("População estrangeira com estatuto legal de residente: total e por algumas nacionalidades", "101.xlsx", "nacionalidade", {}),
-    ("População estrangeira com estatuto legal de residente: total e por sexo", "99.xlsx", "sexo", {"Masculino": "Homens", "Feminino": "Mulheres"}),
-    ("População residente: total e por sexo", "357.xlsx", "sexo", {"Masculino": "Homens", "Feminino": "Mulheres", "Homens": "Homens", "Mulheres": "Mulheres"}),
-    ("Obitos por algumas causas de morte (%)", "373.xlsx", "causa de morte", {}),
-    ("Estabelecimentos nos ensinos pré-escolar, básico e secundário: por nível de ensino", "213.xlsx", "nível de ensino", {}),
-    ("Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo", "282.xlsx", "sexo", {"Masculino": "Homens", "Feminino": "Mulheres"}),
-    ("Profissionais de saúde: médicos, dentistas, enfermeiros e farmacêuticos", "442.xlsx", "profissão", {}),
-    ("Desempregados inscritos nos centros de emprego e de formação profissional (média anual): total e por grupo etário", "221.xlsx", "grupo etário", {}),
-    ("Beneficiários do Rendimento Mínimo Garantido e Rendimento Social de Inserção da Segurança Social: total e por sexo", "513.xlsx", "sexo", {"Masculino": "Homens", "Feminino": "Mulheres", "Homens": "Homens", "Mulheres": "Mulheres"}),
-)
-
-# Indicadores em que o valor "total" grande não aparece no detalhe (só a tabela por categoria).
-BREAKDOWNS_WITHOUT_TOTAL = {
-    "Obitos por algumas causas de morte (%)",
-    "Ganho médio mensal dos trabalhadores por conta de outrem: total e por sexo",
-}
-
-
 def update_breakdowns(values_by_name: dict, report: list[dict]) -> None:
     """Lê os ficheiros da Pordata de BREAKDOWNS (nacionalidade, sexo) e guarda em `breakdown` o nº de pessoas
     por categoria e território (usado na tabela do detalhe do indicador) e em `breakdownLabel` o rótulo.
@@ -678,28 +599,33 @@ def update_catalog_links() -> None:
     write_javascript_object(CATALOG_PATH, "Catálogo da matriz intermunicipal e ligações permanentes das fontes.", "indicatorCatalog", catalog)
 
 
-def main() -> None:
-    """Corre a atualização completa. Com `--check-ine` só confirma que o INE responde e termina.
-    Caso contrário: atualiza a Pordata e o INE, calcula a diferença para o salário mínimo e escreve o relatório
-    (data/update-report.json). Só se todos os indicadores esperados passarem (todos os da Pordata e os 6 do INE)
-    é que grava indicator-values.js, catalog-data.js; senão lança erro e deixa os
-    ficheiros publicados como estavam."""
-    values_by_name = read_javascript_object(VALUES_PATH, "indicatorValuesByName")
-    if "--check-ine" in sys.argv:
-        code = INE_DIRECT["Superfície Km2"]["code"]
-        payload = fetch_json(f"https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd={code}&lang=PT")
-        if not isinstance(payload, list) or not payload or payload[0].get("IndicadorCod") != code:
-            raise RuntimeError("A ligação ao INE devolveu uma resposta inválida")
-        print("Ligação ao INE e proveniência oficial validadas.")
-        return
+def check_ine() -> None:
+    """Confirma que o INE responde com o indicador esperado."""
+    code = INE_DIRECT["Superfície Km2"]["code"]
+    payload = fetch_json(f"https://www.ine.pt/ine/json_indicador/pindica.jsp?op=2&varcd={code}&lang=PT")
+    if not isinstance(payload, list) or not payload or payload[0].get("IndicadorCod") != code:
+        raise RuntimeError("A ligação ao INE devolveu uma resposta inválida")
+    print("Ligação ao INE e proveniência oficial validadas.")
 
-    expected_pordata = len(json.loads(PORDATA_SOURCES_PATH.read_text(encoding="utf-8")))
+
+def fetch_all(values_by_name: dict) -> tuple[list[dict], int, int]:
+    """Obtém os dados da Pordata e do INE. Devolve (relatório, nº Pordata validados, nº INE validados)."""
     report: list[dict] = []
     pordata_count = update_pordata(values_by_name, report)
     update_breakdowns(values_by_name, report)
     ine_count = update_ine(values_by_name, report)
+    return report, pordata_count, ine_count
+
+
+def write_report(report: list[dict]) -> None:
+    """Grava o relatório da atualização (data/update-report.json)."""
     REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
     REPORT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def validate(report: list[dict], pordata_count: int, ine_count: int) -> None:
+    """Falha se faltarem indicadores Pordata ou se o INE não responder; assim os ficheiros publicados ficam como estavam."""
+    expected_pordata = len(json.loads(PORDATA_SOURCES_PATH.read_text(encoding="utf-8")))
     if pordata_count != expected_pordata:
         failures = [entry for entry in report if entry["source"] == "Pordata" and entry["status"] == "kept"]
         raise RuntimeError(f"Só {pordata_count} de {expected_pordata} indicadores Pordata passaram a validação. Falhas: {failures}")
@@ -707,12 +633,28 @@ def main() -> None:
         raise RuntimeError("Nenhum indicador INE foi obtido; a fonte está indisponível")
     if ine_count != len(INE_DIRECT):
         print(f"AVISO: {len(INE_DIRECT) - ine_count} indicadores INE mantidos por falha da fonte.")
+
+
+def write_outputs(values_by_name: dict) -> None:
+    """Grava indicator-values.js e catalog-data.js (remove valores de indicadores que já não estão no catálogo)."""
     ensure_catalog_entries(values_by_name)
     catalog_names = {item["name"] for item in read_javascript_object(CATALOG_PATH, "indicatorCatalog")}
     for stale in [key for key in values_by_name if key not in catalog_names]:
         del values_by_name[stale]
     write_javascript_object(VALUES_PATH, "Valores atualizados automaticamente a partir do INE e da Pordata.", "indicatorValuesByName", values_by_name)
     update_catalog_links()
+
+
+def main() -> None:
+    """Atualização completa: obter -> relatório -> validar -> gravar. Com `--check-ine` só testa a ligação ao INE."""
+    if "--check-ine" in sys.argv:
+        check_ine()
+        return
+    values_by_name = read_javascript_object(VALUES_PATH, "indicatorValuesByName")
+    report, pordata_count, ine_count = fetch_all(values_by_name)
+    write_report(report)  # o relatório grava-se sempre, mesmo que a validação falhe
+    validate(report, pordata_count, ine_count)
+    write_outputs(values_by_name)
     print(f"Atualização concluída: {pordata_count} indicadores Pordata e {ine_count} indicadores INE verificados.")
 
 

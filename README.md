@@ -16,7 +16,7 @@ Se uma fonte falhar ou devolver uma estrutura inesperada, o workflow termina sem
 
 O INE bloqueia ligações diretas provenientes dos servidores partilhados do GitHub. Nessas execuções, a consulta passa por um gateway de leitura do INE e só é aceite quando a resposta identifica o endereço oficial consultado e o código exato do indicador. Fora do GitHub, o script consulta diretamente a API do INE.
 
-Os endereços permanentes usados para cada indicador Pordata estão em `data/pordata-sources.json`. Os indicadores do INE e as respetivas dimensões estão definidos em `scripts/update-data.py`.
+Os endereços permanentes usados para cada indicador Pordata estão em `data/pordata-sources.json`. Os indicadores do INE, os de posição fixa da Pordata e os detalhes por categoria estão em `data/update-config.json` (para adicionar um indicador, editar esse ficheiro e não o `update-data.py`).
 
 ## Alterações ao site
 
