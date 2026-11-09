@@ -4,12 +4,12 @@
 index.html                  # única página na raiz
 FrontEnd/
   html/                     # restantes páginas
-  css/shared/               # global.css, pagina-base.css
+  css/shared/               # global.css
   css/pages/                # um CSS por página
-  js/shared/                # app.js, powerbi-config.js, powerbi-embed.js
+  js/shared/                # app.js
   js/data/                  # catalog-data, indicator-values, map-data (gerados)
   js/pages/                 # um JS por página
-  imgs/  docs/
+  imgs/
 data/  scripts/  .github/
 ```
 

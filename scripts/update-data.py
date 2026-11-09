@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import csv
 import itertools
 import json
 import math
@@ -24,8 +23,6 @@ CATALOG_PATH = ROOT / "FrontEnd" / "js" / "data" / "catalog-data.js"
 PORDATA_SOURCES_PATH = ROOT / "data" / "pordata-sources.json"
 PORDATA_DIRECTORY = ROOT / ".cache" / "pordata"
 REPORT_PATH = ROOT / "data" / "update-report.json"
-POWERBI_PATH = ROOT / "powerbi-data.csv"
-POWERBI_HISTORY_PATH = ROOT / "powerbi-historico.csv"
 HISTORY_YEARS = 1000  # nº máximo de anos guardados por indicador (1000 = todos os anos disponíveis)
 
 TERRITORIES = [
@@ -681,74 +678,11 @@ def update_catalog_links() -> None:
     write_javascript_object(CATALOG_PATH, "Catálogo da matriz intermunicipal e ligações permanentes das fontes.", "indicatorCatalog", catalog)
 
 
-def write_powerbi_dataset(values_by_name: dict) -> None:
-    """Escreve powerbi-data.csv: uma linha por indicador e território, só com o ano mais recente.
-    É o ficheiro que o relatório do Power BI já usa, por isso o formato não deve mudar."""
-    catalog = read_javascript_object(CATALOG_PATH, "indicatorCatalog")
-    fields = [
-        "Indicador",
-        "Territorio",
-        "TipoTerritorio",
-        "Ano",
-        "Valor",
-        "Unidade",
-        "Dimensao",
-        "Dominio",
-        "Tema",
-        "Categoria",
-        "Fonte",
-        "FonteURL",
-    ]
-    with POWERBI_PATH.open("w", encoding="utf-8-sig", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
-        writer.writeheader()
-        for item in catalog:
-            dataset = values_by_name[item["name"]]
-            for territory in TERRITORIES:
-                writer.writerow({
-                    "Indicador": item["name"],
-                    "Territorio": territory,
-                    "TipoTerritorio": "NUTS III" if territory == "Alto Minho" else "Município",
-                    "Ano": dataset["year"],
-                    "Valor": dataset["values"][territory],
-                    "Unidade": dataset["unit"],
-                    "Dimensao": dataset["dimension"],
-                    "Dominio": item["domain"],
-                    "Tema": item["theme"],
-                    "Categoria": item["category"],
-                    "Fonte": item["source"],
-                    "FonteURL": item["url"],
-                })
-
-
-def write_powerbi_history(values_by_name: dict) -> None:
-    """Formato longo: uma linha por indicador x território x ano. Ficheiro separado de powerbi-data.csv
-    para não duplicar valores nos relatórios Power BI que já usam o ficheiro de «último ano»."""
-    catalog = read_javascript_object(CATALOG_PATH, "indicatorCatalog")
-    fields = ["Indicador", "Territorio", "TipoTerritorio", "Ano", "Valor", "Unidade", "Dimensao", "Dominio", "Tema", "Categoria", "Fonte", "FonteURL", "AnoMaisRecente"]
-    with POWERBI_HISTORY_PATH.open("w", encoding="utf-8-sig", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fields)
-        writer.writeheader()
-        for item in catalog:
-            dataset = values_by_name[item["name"]]
-            series = {**(dataset.get("history") or {}), dataset["year"]: dataset["values"]}
-            for year in sorted(series):
-                for territory in TERRITORIES:
-                    writer.writerow({
-                        "Indicador": item["name"], "Territorio": territory,
-                        "TipoTerritorio": "NUTS III" if territory == "Alto Minho" else "Município",
-                        "Ano": year, "Valor": series[year][territory], "Unidade": dataset["unit"],
-                        "Dimensao": dataset["dimension"], "Dominio": item["domain"], "Tema": item["theme"],
-                        "Categoria": item["category"], "Fonte": item["source"], "FonteURL": item["url"],
-                        "AnoMaisRecente": "Sim" if year == dataset["year"] else "Nao",
-                    })
-
-
 def main() -> None:
     """Corre a atualização completa. Com `--check-ine` só confirma que o INE responde e termina.
     Caso contrário: atualiza a Pordata e o INE, calcula a diferença para o salário mínimo e escreve o relatório
     (data/update-report.json). Só se todos os indicadores esperados passarem (todos os da Pordata e os 6 do INE)
-    é que grava indicator-values.js, catalog-data.js e os dois CSV do Power BI; senão lança erro e deixa os
+    é que grava indicator-values.js, catalog-data.js; senão lança erro e deixa os
     ficheiros publicados como estavam."""
     values_by_name = read_javascript_object(VALUES_PATH, "indicatorValuesByName")
     if "--check-ine" in sys.argv:
@@ -779,8 +713,6 @@ def main() -> None:
         del values_by_name[stale]
     write_javascript_object(VALUES_PATH, "Valores atualizados automaticamente a partir do INE e da Pordata.", "indicatorValuesByName", values_by_name)
     update_catalog_links()
-    write_powerbi_dataset(values_by_name)
-    write_powerbi_history(values_by_name)
     print(f"Atualização concluída: {pordata_count} indicadores Pordata e {ine_count} indicadores INE verificados.")
 
 
