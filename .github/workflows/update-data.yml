@@ -8,6 +8,7 @@ on:
     paths:
       - ".github/workflows/update-data.yml"
       - "scripts/update-data.py"
+      - "scripts/update_data/**"
       - "scripts/download-pordata.mjs"
       - "data/pordata-sources.json"
       - "data/update-config.json"

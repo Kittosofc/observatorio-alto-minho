@@ -42,7 +42,7 @@ $action = $_POST['action'] ?? '';
 if ($action === 'add') {
     $title = trim($_POST['title'] ?? '');
     $desc = trim($_POST['description'] ?? '');
-    if ($title === '' || strlen($title) > 360 || strlen($desc) > 1200) {
+    if ($title === '' || mb_strlen($title) > 120 || mb_strlen($desc) > 400) {
         fail(400, 'Título obrigatório (até 120 caracteres) e descrição até 400.');
     }
     $f = $_FILES['pdf'] ?? null;
