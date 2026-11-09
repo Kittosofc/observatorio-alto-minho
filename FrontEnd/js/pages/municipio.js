@@ -108,11 +108,10 @@
   }
 
   // ---------- Ligação ao território ativo ----------
-  const orig = window.setTerritory;
-  window.setTerritory = function (n) {
-    orig(n);
+  // Corre sempre que o território muda (gancho de app.js).
+  onTerritoryChange(n => {
     if (page === "municipio") { if (n === "Alto Minho") location.href = homeUrl; else history.replaceState(null, "", "?m=" + slug(n)), renderMun(); }
     else updateSel();
-  };
+  });
   if (page === "municipio") renderMun(); else updateSel();
 })();

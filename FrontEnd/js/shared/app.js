@@ -91,6 +91,12 @@ const savedIndicatorKey = localStorage.getItem("observatorio-indicator");
 let selectedTerritory = territoryNames.includes(savedTerritory) ? savedTerritory : "Alto Minho";
 let selectedTheme = "Demografia";
 let selectedCategory = "Todas", selectedSub = "";
+// Intervalo de anos do gráfico de evolução ([de, até]); null = todos. Definido pela página Comparar.
+let yearRange = null;
+// Ganchos: as páginas registam funções aqui em vez de substituir funções do app.js.
+const hooks = { territoryChange: [], beforeYearChart: [] };
+const onTerritoryChange = fn => hooks.territoryChange.push(fn);   // fn(nomeDoTerritório), corre depois de desenhar
+const onBeforeYearChart = fn => hooks.beforeYearChart.push(fn);   // fn(indicador), corre antes de desenhar o gráfico
 let selectedIndicatorKey = catalog.some(item => item.key === savedIndicatorKey) ? savedIndicatorKey : byRawName(legacyNames.population).key;
 // Formata números à portuguesa (casas decimais e separadores); sem valor mostra "—".
 const format = value => value == null || value === "—" ? "—" : typeof value === "string" ? value : new Intl.NumberFormat("pt-PT", { maximumFractionDigits:2 }).format(value);
@@ -126,7 +132,7 @@ if(miniMap && miniShapes){
 }
 
 // Muda o território ativo: guarda a escolha, atualiza o título, o select e o mapa, e volta a desenhar tudo.
-function setTerritory(name){ selectedTerritory=name; localStorage.setItem("observatorio-territory",name); if(select)select.value=name; const title=document.querySelector("#territory-title");if(title)title.textContent=name; document.querySelectorAll(".municipality-node").forEach(n=>n.classList.toggle("active",n.dataset.territory===name)); if(miniMap)miniMap.classList.toggle("active",name==="Alto Minho"); render(); }
+function setTerritory(name){ selectedTerritory=name; localStorage.setItem("observatorio-territory",name); if(select)select.value=name; const title=document.querySelector("#territory-title");if(title)title.textContent=name; document.querySelectorAll(".municipality-node").forEach(n=>n.classList.toggle("active",n.dataset.territory===name)); if(miniMap)miniMap.classList.toggle("active",name==="Alto Minho"); render(); hooks.territoryChange.forEach(fn=>fn(name)); }
 
 // Desenha os 4 números grandes do topo (população, envelhecimento, preço m², saldo migratório).
 function renderKpis(data){
@@ -173,9 +179,11 @@ function renderYearComparison(){
   const chart=document.querySelector("#year-chart"); if(!compareSelect||!chart)return;
   const item=catalog.find(entry=>entry.key===compareSelect.value)||catalog[0];
   const municipalities=territoryNames.slice(1);
+  hooks.beforeYearChart.forEach(fn=>fn(item));
 
-  // Junta o histórico ao ano mais recente; fica só com os anos que têm valores.
-  const series={...item.history,[item.year]:item.values};
+  // Junta o histórico ao ano mais recente (limitado ao intervalo escolhido, se houver).
+  let series={...item.history,[item.year]:item.values};
+  if(yearRange)series=Object.fromEntries(Object.entries(series).filter(([year])=>+year>=+yearRange[0]&&+year<=+yearRange[1]));
   const years=Object.keys(series).filter(year=>municipalities.some(name=>series[year]?.[name]!=null&&series[year][name]!==0)).sort((a,b)=>Number(a)-Number(b));
   if(years.length<2){chart.innerHTML=`<p class="history-empty">Este indicador só tem dados de um ano${years[0]?` (${years[0]})`:""}, por isso não há comparação entre anos.</p>`;return;}
 
@@ -221,7 +229,7 @@ function renderYearComparison(){
 
   const tip=chart.querySelector(".line-tip"), svg=chart.querySelector("svg"), vline=chart.querySelector(".hover-line");
   const picker=chart.querySelector(".muni-picker");
-  picker.addEventListener("change",e=>{const n=e.target.dataset.line;if(!n)return;e.target.checked?hiddenLines.delete(n):hiddenLines.add(n);window.renderYearComparison();chart.querySelector(`[data-line="${n}"]`)?.focus();});
+  picker.addEventListener("change",e=>{const n=e.target.dataset.line;if(!n)return;e.target.checked?hiddenLines.delete(n):hiddenLines.add(n);renderYearComparison();chart.querySelector(`[data-line="${n}"]`)?.focus();});
   svg.addEventListener("mousemove",e=>{
     const band=e.target.closest(".year-band"); if(!band){tip.hidden=true;vline.hidden=true;return;}
     const year=band.dataset.year;
