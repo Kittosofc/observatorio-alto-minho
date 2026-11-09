@@ -1,6 +1,6 @@
 // Acesso admin e indicadores visíveis. Carregar DEPOIS de app.js (usa catalog, renderCatalog e hiddenIndicators).
 // ===== 9. ACESSO ADMIN =====
-// Botão no fundo da barra lateral. Sem sessão: leva ao login PHP. Com sessão (backend/php/status.php): mostra "Sair".
+// Botão no fundo da barra lateral. Sem sessão: leva ao login PHP. Com sessão (Backend/php/status.php): mostra "Sair".
 // Só o admin vê a área de carregar ficheiros (body[data-admin="on"]).
 (function adminAccess() {
   const rail = document.querySelector(".rail");
