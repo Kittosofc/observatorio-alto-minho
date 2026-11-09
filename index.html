@@ -12,30 +12,8 @@
   <link rel="stylesheet" href="./FrontEnd/css/pages/index.css">
 </head>
 <body data-page="retrato">
-  <!-- Cabeçalho e navegação -->
-  <header class="rail">
-    <a class="brand" href="./index.html" aria-label="Observatório Alto Minho — início">
-      <span class="brand-symbol" aria-hidden="true"><img src="./FrontEnd/imgs/cim-alto-minho.svg" alt=""></span>
-      <span><b>Alto Minho</b><small>Observatório territorial</small></span>
-    </a>
-    <div class="rail-territory" style="visibility:hidden" aria-hidden="true">
-      <label for="territory-select">Território em análise</label>
-      <select id="territory-select" aria-label="Escolha o território"></select>
-      <p>10 municípios · NUTS III Alto Minho</p>
-    </div>
-    <nav aria-label="Navegação principal">
-      <a class="active" aria-current="page" href="./index.html"><span>01</span>Retrato</a>
-      <a href="./FrontEnd/html/indicadores.html"><span>02</span>Indicadores</a>
-      <a href="./FrontEnd/html/comparar.html"><span>03</span>Comparar</a>
-      <a href="./FrontEnd/html/metodologia.html"><span>04</span>Metodologia</a>
-      <a href="./FrontEnd/html/forms.html"><span>05</span>Metas</a>
-      <a href="./FrontEnd/html/transferencias.html"><span>06</span>Documentos</a>
-    </nav>
-    <div class="rail-note">
-      <span class="source-dot"></span>
-      <p>Dados estatísticos<br><strong>INE · Pordata</strong></p>
-    </div>
-  </header>
+  <!-- Barra lateral (gerada por rail.js) -->
+  <script src="./FrontEnd/js/shared/rail.js"></script>
 
   <!-- Conteúdo principal -->
   <main id="top">
@@ -63,7 +41,7 @@
             <desc id="map-description">Limites administrativos dos municípios da Comunidade Intermunicipal do Alto Minho.</desc>
             <g id="map-nodes"></g>
           </svg>
-          <div class="map-key"><div><small class="map-limits" style="margin-left:0">Limites: CAOP · DGT</small></div><small class="map-sources">Fontes: INE e PORDATA</small></div>
+          <div class="map-key"><div><small class="map-limits">Limites: CAOP · DGT</small></div><small class="map-sources">Fontes: INE e PORDATA</small></div>
         </section>
       </div>
 

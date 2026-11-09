@@ -6,8 +6,8 @@ FrontEnd/
   html/                     # restantes páginas
   css/shared/               # global.css
   css/pages/                # um CSS por página
-  js/shared/                # app.js
-  js/data/                  # catalog-data, indicator-values, map-data (gerados)
+  js/shared/                # rail.js (menu), app.js, footer.js, admin.js
+  js/data/                  # catalog-data, indicator-values, map-data (gerados); catalog-overrides (à mão)
   js/pages/                 # um JS por página
   imgs/
 data/  scripts/  .github/

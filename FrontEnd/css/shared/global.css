@@ -81,6 +81,7 @@ body[data-page="transferencias"] { --paper: #c4d8ef; }
 .rail-territory select:focus-visible { outline: 0; border-bottom-color: var(--blue-ink); }
 .rail-territory option { background: #fff; color: var(--ink); }
 .rail-territory p { margin: 8px 0 0; color: #8a9bb3; font-size: 11px; line-height: 1.4; }
+.rail-territory--hidden { visibility: hidden; }
 .rail-territory + nav { margin-top: 22px; }
 
 
