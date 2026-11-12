@@ -17,40 +17,66 @@
 
   <!-- Conteúdo principal -->
   <main id="top">
-    <section class="workspace page-workspace">
+    <section class="workspace page-workspace cmp">
       <div class="page-intro">
         <div>
           <p class="overline">03 · Comparar</p>
           <h1>Comparação municipal</h1>
+          <p>Permite comparar indicadores entre municípios do Alto Minho.</p>
         </div>
       </div>
 
-      <section class="card" id="comparar">
-        <div class="card-head">
-          <div><p class="overline">Gráfico 1</p><h2>Valor por município</h2></div>
-          <div class="compare-controls">
-            <label class="compare-control">Indicador a comparar
-              <select id="compare-indicator" aria-label="Indicador a comparar"></select>
-            </label>
-            <label class="compare-control">Segundo indicador (opcional)
-              <select id="compare-indicator-2" aria-label="Segundo indicador a comparar"></select>
-            </label>
-          </div>
-        </div>
-        <div class="chart" id="comparison-chart" aria-label="Comparação dos municípios"></div>
-      </section>
+      <!-- Resumo: indicador e município em destaque (preenchido por comparar.js) -->
+      <section class="cmp-summary" id="cmp-summary" aria-live="polite"></section>
 
-      <section class="card" id="evolucao">
-        <div class="card-head">
-          <div><p class="overline">Gráfico 2</p><h2>Evolução ao longo dos anos</h2></div>
-          <form class="year-filter" id="year-filter">
-            <label>Ano inicial<select id="year-from"></select></label>
-            <label>Ano final<select id="year-to"></select></label>
-            <button type="submit">Aplicar</button>
-          </form>
-        </div>
-        <div class="history-chart" id="year-chart"></div>
-      </section>
+      <!-- Cartões de resumo -->
+      <section class="cmp-kpis" id="cmp-kpis" aria-live="polite"></section>
+
+      <div class="cmp-row cmp-row-top">
+        <!-- Filtros -->
+        <aside class="cmp-card cmp-filters" aria-labelledby="cmp-filters-title">
+          <h2 id="cmp-filters-title">Filtros</h2>
+          <label class="cmp-field">Indicador
+            <select id="compare-indicator" aria-label="Indicador a comparar"></select>
+          </label>
+          <label class="cmp-field">Ano
+            <select id="cmp-year" aria-label="Ano"></select>
+          </label>
+          <label class="cmp-field">Ordenar
+            <select id="cmp-order" aria-label="Ordenar municípios">
+              <option value="desc">Valor (maior → menor)</option>
+              <option value="asc">Valor (menor → maior)</option>
+              <option value="az">Nome (A → Z)</option>
+            </select>
+          </label>
+          <fieldset class="cmp-ref">
+            <legend>Comparar com</legend>
+            <label><input type="radio" name="cmp-ref" value="alto-minho" checked><span>Alto Minho</span><i class="cmp-info" title="Média do conjunto dos 10 municípios do Alto Minho.">i</i></label>
+            <label class="is-disabled"><input type="radio" name="cmp-ref" value="norte" disabled><span>Norte</span><i class="cmp-info" title="Dados da região Norte ainda não disponíveis.">i</i></label>
+            <label class="is-disabled"><input type="radio" name="cmp-ref" value="portugal" disabled><span>Portugal</span><i class="cmp-info" title="Dados de Portugal ainda não disponíveis.">i</i></label>
+          </fieldset>
+        </aside>
+
+        <!-- Gráfico de barras -->
+        <section class="cmp-card cmp-bars-card" aria-labelledby="cmp-bars-title">
+          <h2 id="cmp-bars-title"></h2>
+          <div id="cmp-bars" class="cmp-bars"></div>
+        </section>
+      </div>
+
+      <div class="cmp-row cmp-row-bottom">
+        <!-- Evolução -->
+        <section class="cmp-card cmp-line-card" aria-labelledby="cmp-line-title">
+          <h2 id="cmp-line-title"></h2>
+          <div id="cmp-line" class="cmp-line"></div>
+        </section>
+
+        <!-- Leitura rápida -->
+        <aside class="cmp-card cmp-reading" aria-labelledby="cmp-reading-title">
+          <h2 id="cmp-reading-title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Leitura rápida</h2>
+          <ul id="cmp-reading"></ul>
+        </aside>
+      </div>
     </section>
   </main>
   <script src="../js/shared/boot.js" data-page="comparar" data-values="1"></script>

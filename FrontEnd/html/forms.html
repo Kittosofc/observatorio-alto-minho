@@ -27,7 +27,13 @@
 
       <div class="doc-toolbar">
         <button id="open-upload" class="doc-create" type="button">+ Carregar Excel</button>
+        <button id="download-example" class="doc-example" type="button">Descarregar exemplo</button>
         <input id="file" type="file" accept=".xlsx,.xls,.csv" hidden>
+        <p class="doc-hint">
+          <strong>Formato do ficheiro:</strong> 1.ª linha com os títulos; coluna <b>Município</b> (1 linha por município)
+          e uma coluna por meta, preenchida com <b>Sim</b> (cumprida) ou <b>Não</b> (por cumprir).
+          Célula vazia = meta que não se aplica ao município. Aceita .xlsx, .xls e .csv.
+        </p>
       </div>
 
       <div id="msg"></div>

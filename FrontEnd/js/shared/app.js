@@ -56,6 +56,20 @@ const categoryList = [
   "Educação",
   "Território",
 ];
+// Ícones (SVG, traço) por categoria, mostrados nos botões de filtro e na coluna Área da tabela.
+const svgIcon = (paths) =>
+  `<svg class="cat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths}</svg>`;
+const categoryIcons = {
+  Todas: svgIcon('<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>'),
+  Demografia: svgIcon('<circle cx="9" cy="8" r="3"/><path d="M3.5 19c0-3.2 2.4-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><circle cx="17" cy="9" r="2.3"/><path d="M16.5 13.7c2.6 0 4.5 1.9 4.5 4.8"/>'),
+  Social: svgIcon('<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/>'),
+  Habitação: svgIcon('<path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.8V20h13V9.8"/><path d="M10 20v-5.5h4V20"/>'),
+  Saúde: svgIcon('<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8.5v7M8.5 12h7"/>'),
+  Educação: svgIcon('<path d="M2.5 9 12 4.5 21.5 9 12 13.5z"/><path d="M6.5 11.2v4.3c0 1.2 2.5 2.5 5.5 2.5s5.5-1.3 5.5-2.5v-4.3"/><path d="M21.5 9v5.5"/>'),
+  Território: svgIcon('<path d="M12 21s-6.5-5.7-6.5-10.8a6.5 6.5 0 0 1 13 0C18.5 15.3 12 21 12 21z"/><circle cx="12" cy="10.2" r="2.3"/>'),
+};
+const iconOf = (name) => categoryIcons[name] || "";
+
 const demografiaSubs = [
   "População",
   "Natalidade",
@@ -702,6 +716,10 @@ function renderYearComparison() {
 // Tabela de indicadores. Sem pesquisa mostra só os da área ativa; com pesquisa procura em todos.
 // Clicar numa linha escolhe o indicador (o detalhe de cima atualiza); duplo clique faz scroll até ele.
 let hiddenIndicators = new Set(); // indicadores escondidos pelo admin (guardados em Backend/php/data/indicadores.json)
+const CATALOG_PAGE_SIZE = 10; // nº de linhas mostradas de cada vez (botão "Mostrar mais")
+let catalogLimit = CATALOG_PAGE_SIZE;
+let catalogFilterKey = "";
+let catalogOpen = false; // lista aberta pelo botão "Ver lista de indicadores"
 function renderCatalog(query = "") {
   const body = document.querySelector("#catalog-body"),
     empty = document.querySelector("#catalog-empty"),
@@ -740,10 +758,37 @@ function renderCatalog(query = "") {
     caption.textContent = normalized
       ? `Resultados da pesquisa · ${label} · ${filtered.length}`
       : `Indicadores · ${label} · ${filtered.length}`;
-  body.innerHTML = filtered
+  // Se a pesquisa ou o filtro mudaram, volta às primeiras linhas.
+  const filterKey = `${normalized}|${selectedCategory}|${selectedSub}`;
+  if (filterKey !== catalogFilterKey) {
+    catalogFilterKey = filterKey;
+    catalogLimit = CATALOG_PAGE_SIZE;
+  }
+  const visible = filtered.slice(0, catalogLimit);
+  // A lista só aparece com pesquisa, filtro de categoria ou quando o utilizador a pede.
+  const filtering = !!normalized || selectedCategory !== "Todas";
+  const resultsBox = document.querySelector("#catalog-results");
+  if (resultsBox) resultsBox.hidden = !(filtering || catalogOpen);
+  const toggleBtn = document.querySelector("#catalog-toggle");
+  if (toggleBtn) {
+    toggleBtn.hidden = filtering;
+    toggleBtn.setAttribute("aria-expanded", String(catalogOpen));
+    toggleBtn.textContent = catalogOpen
+      ? "Esconder lista de indicadores ▴"
+      : "Ver lista de indicadores ▾";
+  }
+  const moreWrap = document.querySelector("#catalog-more-wrap");
+  if (moreWrap) {
+    const remaining = filtered.length - visible.length;
+    moreWrap.hidden = remaining <= 0;
+    const countEl = document.querySelector("#catalog-more-count");
+    if (countEl)
+      countEl.textContent = `A mostrar ${visible.length} de ${filtered.length}`;
+  }
+  body.innerHTML = visible
     .map(
       (item) =>
-        `<tr class="catalog-row ${item.key === selectedIndicatorKey ? "active" : ""}${hiddenIndicators.has(item.rawName) ? " is-hidden" : ""}" tabindex="0" role="button" data-indicator-key="${item.key}" aria-label="Ver ${item.name}"><td>${adm ? `<label class="admin-vis" title="Mostrar aos utilizadores"><input type="checkbox" data-vis-key="${item.key}" ${hiddenIndicators.has(item.rawName) ? "" : "checked"}></label>` : ""}${item.name}</td><td>${item.area}</td><td>${item.year}</td><td>${item.source}</td></tr>`,
+        `<tr class="catalog-row ${item.key === selectedIndicatorKey ? "active" : ""}${hiddenIndicators.has(item.rawName) ? " is-hidden" : ""}" tabindex="0" role="button" data-indicator-key="${item.key}" aria-label="Ver ${item.name}"><td>${adm ? `<label class="admin-vis" title="Mostrar aos utilizadores"><input type="checkbox" data-vis-key="${item.key}" ${hiddenIndicators.has(item.rawName) ? "" : "checked"}></label>` : ""}${item.name}</td><td><span class="area-cell">${iconOf(item.area)}${item.area}</span></td><td>${item.year}</td><td>${item.source}</td></tr>`,
     )
     .join("");
   empty.hidden = filtered.length > 0;
@@ -752,7 +797,7 @@ function renderCatalog(query = "") {
       selectCatalogIndicator(row.dataset.indicatorKey, scrollToDetail);
     row.addEventListener("click", (e) => {
       if (e.target.closest(".admin-vis")) return;
-      choose(false);
+      choose(true);
     });
     row.addEventListener("dblclick", (e) => {
       if (e.target.closest(".admin-vis")) return;
@@ -762,7 +807,7 @@ function renderCatalog(query = "") {
       if (event.target.closest(".admin-vis")) return;
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        choose(false);
+        choose(true);
       }
     });
   });
@@ -773,10 +818,12 @@ function renderCategoryButtons() {
   const bar = document.querySelector("#category-filter"),
     subBar = document.querySelector("#subcategory-filter");
   if (!bar) return;
-  const btn = (text, active, attr) =>
-    `<button type="button" class="cat-btn${active ? " active" : ""}" ${attr} aria-pressed="${active}">${text}</button>`;
+  const btn = (text, active, attr, icon = "") =>
+    `<button type="button" class="cat-btn${active ? " active" : ""}" ${attr} aria-pressed="${active}">${icon ? icon : ""}<span class="cat-label">${text}</span></button>`;
   bar.innerHTML = ["Todas", ...categoryList]
-    .map((c) => btn(c, c === selectedCategory, `data-category="${c}"`))
+    .map((c) =>
+      btn(c, c === selectedCategory, `data-category="${c}"`, iconOf(c)),
+    )
     .join("");
   if (subBar) {
     subBar.hidden = selectedCategory !== "Demografia";
@@ -805,6 +852,66 @@ document
       setCategory("Demografia", b.dataset.sub === "Todas" ? "" : b.dataset.sub);
   });
 
+// Mini-gráfico de evolução do indicador no território ativo (passo 2).
+function renderDetailChart(item) {
+  const box = document.querySelector("#detail-chart");
+  if (!box) return;
+  const title = document.querySelector("#detail-chart-title"),
+    sub = document.querySelector("#detail-chart-sub");
+  if (title) title.textContent = `Evolução · ${item.name}`;
+  if (sub)
+    sub.textContent = `${selectedTerritory}${item.suffix ? ` (${String(item.suffix).trim()})` : ""}`;
+  const series = { ...item.history, [item.year]: item.values };
+  const pts = Object.keys(series)
+    .sort((a, b) => Number(a) - Number(b))
+    .map((year) => ({ year, v: series[year]?.[selectedTerritory] }))
+    .filter((p) => typeof p.v === "number" && isFinite(p.v));
+  if (pts.length < 2) {
+    box.innerHTML = `<p class="history-empty">${pts.length ? `Só existem dados de ${pts[0].year}` : "Sem dados"} para este território, por isso não há evolução a mostrar.</p>`;
+    return;
+  }
+  const W = 440, H = 200, L = 62, R = 30, T = 30, B = 30;
+  const vals = pts.map((p) => p.v);
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const pad = (max - min) * 0.2 || Math.abs(max) * 0.1 || 1;
+  const lo = min - pad, hi = max + pad;
+  const x = (i) => L + (i * (W - L - R)) / (pts.length - 1);
+  const y = (v) => T + ((hi - v) * (H - T - B)) / (hi - lo);
+  const nf = new Intl.NumberFormat("pt-PT", {
+    maximumFractionDigits: hi - lo < 10 ? 1 : 0,
+  });
+  const grid = [0, 1, 2]
+    .map((k) => {
+      const v = lo + ((hi - lo) * k) / 2;
+      return `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#d7e0ec" stroke-width="1"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="#6b7a90">${nf.format(v)}</text>`;
+    })
+    .join("");
+  const step = Math.ceil(pts.length / 6);
+  const xlabels = pts
+    .map((p, i) =>
+      i === pts.length - 1 || (i % step === 0 && pts.length - 1 - i >= step)
+        ? `<text x="${x(i)}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#6b7a90">${p.year}</text>`
+        : "",
+    )
+    .join("");
+  const line = pts.map((p, i) => `${i ? "L" : "M"}${x(i)} ${y(p.v)}`).join(" ");
+  const area = `${line} L${x(pts.length - 1)} ${H - B} L${x(0)} ${H - B} Z`;
+  const dots = pts
+    .map(
+      (p, i) =>
+        pts.length > 12 && i !== pts.length - 1
+          ? ""
+          : `<circle cx="${x(i)}" cy="${y(p.v)}" r="${i === pts.length - 1 ? 5 : 4}" fill="#fff" stroke="#2f4468" stroke-width="2"><title>${p.year}: ${formattedValue(item, p.v)}</title></circle>`,
+    )
+    .join("");
+  const last = pts[pts.length - 1];
+  const lx = x(pts.length - 1), ly = y(last.v);
+  const label = nf.format(last.v);
+  const bw = Math.max(34, label.length * 8 + 14);
+  const badge = `<rect x="${lx - bw / 2}" y="${ly - 30}" width="${bw}" height="20" rx="6" fill="#2f4468"/><text x="${lx}" y="${ly - 16}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">${label}</text>`;
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução de ${item.name} em ${selectedTerritory}, de ${pts[0].year} a ${last.year}">${grid}<path d="${area}" fill="rgba(74,120,176,.18)"/><path d="${line}" fill="none" stroke="#4a78b0" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>${dots}${badge}${xlabels}</svg>`;
+}
+
 // Painel "Indicador selecionado": nome, descrição, valor no território ativo, área, ano, leitura e fonte.
 function renderCatalogDetail() {
   if (!document.querySelector("#indicator-detail")) return;
@@ -822,7 +929,7 @@ function renderCatalogDetail() {
   document.querySelector("#detail-dimension").textContent = item.dimension;
   document.querySelector("#detail-source").textContent = item.source;
   document.querySelector("#detail-source-link").href = item.sourceUrl;
-  document.querySelector("#indicator-compare-button").disabled = false;
+  renderDetailChart(item);
   // Detalhe por categoria (ex.: Nacionalidade → nº de pessoas por país, no território escolhido).
   const box = document.querySelector("#detail-breakdown");
   if (box) {
@@ -860,7 +967,7 @@ function selectCatalogIndicator(key, scrollToDetail = false) {
     );
   if (scrollToDetail)
     document
-      .querySelector("#indicator-detail")
+      .querySelector("#step-detail")
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 // Redesenha tudo o que depende do território (KPIs, cartões, comparação e detalhe).
@@ -905,17 +1012,27 @@ if (compareSelect2)
     localStorage.setItem("observatorio-indicator-2", compareSelect2.value);
     renderComparison();
   });
+// Botão "Mostrar mais": revela mais linhas da tabela.
+document.querySelector("#catalog-more")?.addEventListener("click", () => {
+  catalogLimit += CATALOG_PAGE_SIZE;
+  renderCatalog(document.querySelector("#indicator-search")?.value || "");
+});
 // Caixa de pesquisa: refiltra a tabela a cada letra escrita.
 const searchInput = document.querySelector("#indicator-search");
 if (searchInput)
   searchInput.addEventListener("input", (e) => renderCatalog(e.target.value));
 // Botão "Comparar municípios": guarda o indicador e abre a página Comparar.
-const compareButton = document.querySelector("#indicator-compare-button");
-if (compareButton)
-  compareButton.addEventListener("click", () => {
-    localStorage.setItem("observatorio-indicator", selectedIndicatorKey);
-    window.location.href = "./comparar.html";
-  });
+// Cartões do passo 3: guardam o indicador escolhido antes de seguir a ligação.
+document.querySelectorAll("[data-go]").forEach((link) =>
+  link.addEventListener("click", () =>
+    localStorage.setItem("observatorio-indicator", selectedIndicatorKey),
+  ),
+);
+// Botão "Ver lista de indicadores": abre/fecha a lista completa.
+document.querySelector("#catalog-toggle")?.addEventListener("click", () => {
+  catalogOpen = !catalogOpen;
+  renderCatalog(document.querySelector("#indicator-search")?.value || "");
+});
 
 // Regista ferramentas (select_territory e show_theme) para assistentes/agentes de IA controlarem a página.
 // É opcional: só corre se o browser suportar document.modelContext.

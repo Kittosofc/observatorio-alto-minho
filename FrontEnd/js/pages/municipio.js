@@ -99,7 +99,7 @@
       { label: "Crimes registados", ds: DS("Crimes registados pelas polícias por mil habitantes"), v: DS("Crimes registados pelas polícias por mil habitantes").values[name], d: 1, unit: "‰ habitantes" },
       { label: "Habitantes por médico", ds: DS("Habitantes por médico e farmacêutico"), v: DS("Habitantes por médico e farmacêutico").values[name], d: 1, unit: "hab. por médico" }
     ];
-    const cards = specs.map(({ label, ds, v, d, unit, sign }) => `<article class="mun-card"><div><span class="l">${label}</span><span class="y">${ds.year}</span></div><div class="v"><b>${sign && v > 0 ? "+" : ""}${f(v, d)}</b><small>${unit}</small></div></article>`).join("");
+    const cards = specs.map(({ label, ds, v, d, unit, sign }) => `<article class="mun-card"><span class="l">${label}</span><div class="v"><b>${sign && v > 0 ? "+" : ""}${f(v, d)}</b><small>${unit}</small></div><div class="meta"><span>Ano</span><strong>${ds.year}</strong></div></article>`).join("");
     root.innerHTML = `<svg class="mun-scene" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${scene(s, "sky1")}</svg><img class="mun-bg" src="${imagemMunicipio}" alt="" onerror="this.remove()"><div class="mun-shade"></div>
       <div class="mun-body"><a class="mun-back" href="${homeUrl}"><span aria-hidden="true">←</span>Voltar ao mapa</a>
       <header class="mun-head"><p class="overline">Município · Alto Minho</p><h1 class="${name.length > 16 ? "long" : ""}">${name}</h1><p>Retrato estatístico do município no contexto da NUTS III Alto Minho: população, natalidade, poder de compra, segurança e saúde.</p></header>

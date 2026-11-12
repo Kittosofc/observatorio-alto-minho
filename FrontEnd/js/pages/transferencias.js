@@ -21,8 +21,8 @@
       <button class="doc-x" type="button" aria-label="Fechar">×</button>
       <h3 id="doc-dlg-title">Novo documento</h3>
       <input type="hidden" name="action" value="add">
-      <label>Título<input name="title" maxlength="120" placeholder="Ex.: Relatório anual 2025" required></label>
-      <label>Descrição<textarea name="description" maxlength="400" rows="3" placeholder="Breve descrição do documento"></textarea></label>
+      <label><span class="doc-lbl">Título <small class="doc-count" data-for="title" data-max="120">máx. 120 caracteres</small></span><input name="title" maxlength="120" placeholder="Ex.: Relatório anual 2025" required></label>
+      <label><span class="doc-lbl">Descrição <small class="doc-count" data-for="description" data-max="400">máx. 400 caracteres</small></span><textarea name="description" maxlength="400" rows="3" placeholder="Breve descrição do documento"></textarea></label>
       <label class="doc-drop">
         <input name="pdf" type="file" accept="application/pdf,.pdf" required>
         <span class="doc-drop-ico">⬆</span>
@@ -41,8 +41,15 @@
   const fileIn = form.querySelector("input[type=file]");
   const fileName = form.querySelector(".doc-drop-name");
   const drop = form.querySelector(".doc-drop");
+  const counts = form.querySelectorAll(".doc-count");
+  const updCounts = () => counts.forEach(c => {
+    const n = form.elements[c.dataset.for].value.length, max = +c.dataset.max;
+    c.textContent = n ? `${n}/${max} caracteres` : `máx. ${max} caracteres`;
+    c.classList.toggle("full", n >= max);
+  });
+  form.addEventListener("input", updCounts);
   const open = () => { box.hidden = false; form.title.focus(); };
-  const close = () => { box.hidden = true; form.reset(); fileName.textContent = ""; msg.textContent = ""; };
+  const close = () => { box.hidden = true; form.reset(); updCounts(); fileName.textContent = ""; msg.textContent = ""; };
   bar.querySelector(".doc-create").addEventListener("click", open);
   box.querySelector(".doc-x").addEventListener("click", close);
   box.querySelector(".doc-cancel").addEventListener("click", close);

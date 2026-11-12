@@ -26,52 +26,103 @@
       </div>
 
       <section class="catalog-section" id="indicadores">
-        <div class="catalog-layout">
-          <!-- Coluna 02: pesquisa, indicador selecionado e tabela -->
-          <div class="catalog-col">
-            <div class="catalog-head">
+        <div class="steps">
+
+          <!-- 1. Encontrar o indicador -->
+          <section class="step-card" aria-labelledby="step1-title">
+            <div class="step-intro">
+              <span class="step-num" aria-hidden="true">1</span>
               <div>
-                <h2>Encontrar um indicador</h2>
+                <h2 id="step1-title">Encontrar o indicador</h2>
+                <p>Pesquise por nome ou tema e selecione o indicador que pretende analisar.</p>
               </div>
+            </div>
+            <div class="step-body">
               <label class="search-control">
                 <span class="sr-only">Pesquisar indicadores</span>
-                <input id="indicator-search" type="search" placeholder="Pesquisar Indicador...">
+                <input id="indicator-search" type="search" placeholder="Pesquisar indicador...">
               </label>
+              <!-- Botões de categoria (preenchidos por app.js) -->
+              <div class="cat-filter" id="category-filter" role="group" aria-label="Filtrar por categoria"></div>
+              <div class="cat-filter cat-sub" id="subcategory-filter" role="group" aria-label="Filtrar por subcategoria da Demografia" hidden></div>
+              <button class="catalog-toggle" id="catalog-toggle" type="button" aria-expanded="false">Ver lista de indicadores ▾</button>
             </div>
 
-            <!-- Botões de categoria (preenchidos por app.js) -->
-            <div class="cat-filter" id="category-filter" role="group" aria-label="Filtrar por categoria"></div>
-            <div class="cat-filter cat-sub" id="subcategory-filter" role="group" aria-label="Filtrar por subcategoria da Demografia" hidden></div>
+            <!-- Lista de resultados: só aparece com pesquisa, filtro ou ao pedir -->
+            <div class="catalog-results" id="catalog-results" hidden>
+              <p class="overline" id="catalog-caption"></p>
+              <div class="catalog-table-wrap">
+                <table>
+                  <thead><tr><th>Indicador</th><th>Área</th><th>Ano</th><th>Fonte</th></tr></thead>
+                  <tbody id="catalog-body"></tbody>
+                </table>
+                <p class="empty-state" id="catalog-empty" hidden>Nenhum indicador corresponde à pesquisa.</p>
+              </div>
+              <div class="catalog-more" id="catalog-more-wrap" hidden>
+                <button class="catalog-more-btn" id="catalog-more" type="button">Mostrar mais</button>
+                <span class="catalog-more-count" id="catalog-more-count"></span>
+              </div>
+            </div>
+          </section>
 
+          <!-- 2. Visualizar o indicador selecionado -->
+          <section class="step-card step-wide" id="step-detail" aria-labelledby="step2-title">
+            <div class="step-intro">
+              <span class="step-num" aria-hidden="true">2</span>
+              <div>
+                <h2 id="step2-title">Visualizar o indicador selecionado</h2>
+                <p>Consulte o resultado atual, a informação essencial e a sua evolução recente.</p>
+              </div>
+            </div>
             <div class="indicator-detail" id="indicator-detail" aria-live="polite">
-              <div class="detail-copy">
-                <p class="overline">Indicador selecionado</p>
+              <div class="detail-main">
+                <p class="overline">Indicador</p>
                 <h3 id="detail-name"></h3>
-                <p id="detail-description"></p>
+                <p class="detail-desc" id="detail-description"></p>
+                <div class="detail-value">
+                  <span id="detail-territory"></span>
+                  <strong id="detail-value"></strong>
+                </div>
+                <dl class="detail-meta">
+                  <div><dt>Área</dt><dd id="detail-area"></dd></div>
+                  <div><dt>Ano</dt><dd id="detail-year"></dd></div>
+                  <div><dt>Leitura</dt><dd id="detail-dimension"></dd></div>
+                  <div><dt>Fonte</dt><dd><a id="detail-source-link" href="#" target="_blank" rel="noopener"><span id="detail-source"></span> ↗</a></dd></div>
+                </dl>
               </div>
-              <div class="detail-value">
-                <span id="detail-territory"></span>
-                <strong id="detail-value"></strong>
+              <div class="detail-chart">
+                <p class="overline" id="detail-chart-title">Evolução</p>
+                <p class="detail-chart-sub" id="detail-chart-sub"></p>
+                <div id="detail-chart"></div>
               </div>
-              <dl class="detail-meta">
-                <div><dt>Área</dt><dd id="detail-area"></dd></div>
-                <div><dt>Ano</dt><dd id="detail-year"></dd></div>
-                <div><dt>Leitura</dt><dd id="detail-dimension"></dd></div>
-                <div><dt>Fonte</dt><dd><a id="detail-source-link" href="#" target="_blank" rel="noopener"><span id="detail-source"></span> ↗</a></dd></div>
-              </dl>
               <div class="detail-breakdown" id="detail-breakdown" hidden></div>
-              <button class="detail-action" id="indicator-compare-button" type="button">Comparar municípios <span>↓</span></button>
             </div>
+          </section>
 
-            <p class="overline" id="catalog-caption"></p>
-            <div class="catalog-table-wrap">
-              <table>
-                <thead><tr><th>Indicador</th><th>Área</th><th>Ano</th><th>Fonte</th></tr></thead>
-                <tbody id="catalog-body"></tbody>
-              </table>
-              <p class="empty-state" id="catalog-empty" hidden>Nenhum indicador corresponde à pesquisa.</p>
+          <!-- 3. Aprofundar a análise -->
+          <section class="step-card step-wide" aria-labelledby="step3-title">
+            <div class="step-intro">
+              <span class="step-num" aria-hidden="true">3</span>
+              <div>
+                <h2 id="step3-title">Aprofundar a análise</h2>
+                <p>Explore o indicador em maior detalhe através das seguintes funcionalidades.</p>
+              </div>
             </div>
-          </div>
+            <div class="deep-cards">
+              <a class="deep-card deep-primary" id="indicator-compare-button" data-go href="./comparar.html#comparar">
+                <svg class="deep-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+                <span class="deep-text"><strong>Comparar municípios <i>→</i></strong><span>Compare o indicador entre os municípios do Alto Minho.</span></span>
+              </a>
+              <a class="deep-card" data-go href="./comparar.html#evolucao">
+                <svg class="deep-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 17 6-6 4 4 8-9"/><path d="M15 6h6v6"/></svg>
+                <span class="deep-text"><strong>Evolução temporal <i>→</i></strong><span>Analise a evolução do indicador ao longo do tempo.</span></span>
+              </a>
+              <a class="deep-card" data-go href="./metodologia.html">
+                <svg class="deep-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
+                <span class="deep-text"><strong>Consulta metodológica <i>→</i></strong><span>Conheça as definições, fórmulas e fontes de dados do indicador.</span></span>
+              </a>
+            </div>
+          </section>
 
         </div>
       </section>

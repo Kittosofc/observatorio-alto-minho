@@ -1,94 +1,684 @@
 /* Página Indicadores */
 /* Estilos exclusivos da página Indicadores. */
-.ind-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(21,59,50,.55); }
-.ind-modal[hidden] { display: none; }
-.ind-dialog { width: min(640px, 100%); max-height: 90vh; overflow: auto; background: #fff; border-radius: 22px; padding: 30px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.3); }
-.ind-dialog .overline { margin: 0; }
-.ind-dialog h2 { margin: 0; font-size: 32px; line-height: 1.1; color: var(--forest); }
-.ind-dialog dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.ind-dialog dt { font-size: 12px; color: var(--muted); }
-.ind-dialog dd { margin: 4px 0 0; font-size: 15px; font-weight: 500; }
-.ind-dialog dd a { color: var(--forest-2); }
-.ind-dialog .full { grid-column: 1 / -1; }
-.ind-close { align-self: flex-start; min-height: 44px; padding: 0 24px; border: 0; border-radius: 999px; background: var(--forest); color: var(--lime); font-weight: 600; cursor: pointer; }
-@media (max-width: 760px) { .ind-dialog dl { grid-template-columns: 1fr; } }
-
-/* Layout e componentes exclusivos da página Indicadores. */
-/* ===== Página Indicadores: layout compacto (menos scroll) =====
-   Tudo limitado a body[data-page="indicadores"] para não afetar as outras páginas. */
-body[data-page="indicadores"] .subpage-toolbar { padding: 0 0 22px; }
-body[data-page="indicadores"] .catalog-section { padding: 26px 0 0; }
-body[data-page="indicadores"] .section-index { font-size: 34px; }
-body[data-page="indicadores"] .section-copy h2,
-body[data-page="indicadores"] .catalog-head { grid-template-columns: 1fr minmax(250px, 330px); }
-body[data-page="indicadores"] .catalog-head h2 { font-size: clamp(26px, 2.8vw, 36px); }
-body[data-page="indicadores"] .catalog-head .overline { margin-bottom: 8px; }
-
-/* Painel do indicador selecionado */
-body[data-page="indicadores"] .indicator-detail { gap: 14px 42px; margin-top: 20px; padding: 18px 24px; }
-body[data-page="indicadores"] .detail-copy h3 { font-size: clamp(24px, 2.4vw, 32px); }
-body[data-page="indicadores"] .detail-value strong { font-size: clamp(30px, 3.2vw, 42px); }
-
-/* Separadores de área */
-body[data-page="indicadores"] .themes { padding: 20px 0 14px; }
-@media (min-width: 1081px) {
-  body[data-page="indicadores"] .themes { grid-template-columns: 56px 340px 1fr; }
+.ind-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(21, 59, 50, 0.55);
 }
-
-/* Cartões da área escolhida */
-body[data-page="indicadores"] .theme-overview { gap: 40px; padding: 22px 0 26px; }
-body[data-page="indicadores"] .overview-copy h2 { font-size: clamp(28px, 3vw, 40px); }
-body[data-page="indicadores"] .overview-copy h2 { margin-bottom: 12px; }
-body[data-page="indicadores"] .indicator { min-height: 56px; }
-body[data-page="indicadores"] .indicator strong { font-size: 26px; }
-
-/* Tabela: cabeçalho fixo e scroll só dentro da tabela (em vez de alongar a página) */
-body[data-page="indicadores"] .catalog-table-wrap { max-height: 340px; margin-top: 12px; overflow: auto; }
-body[data-page="indicadores"] th { position: sticky; top: 0; z-index: 1; padding: 10px 12px; background: var(--paper); box-shadow: 0 1px 0 var(--line); }
-body[data-page="indicadores"] td { padding: 9px 12px; }
-
-/* Mantém áreas e catálogo numa sequência de leitura clara em qualquer largura. */
-body[data-page="indicadores"] .catalog-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
-body[data-page="indicadores"] .catalog-col { min-width: 0; }
-body[data-page="indicadores"] #catalog-caption { margin: 22px 0 0; }
-@media (min-width: 1280px) {
-  body[data-page="indicadores"] table { min-width: 0; }
-  body[data-page="indicadores"] td, body[data-page="indicadores"] th { padding-left: 8px; padding-right: 8px; }
-  body[data-page="indicadores"] td { font-size: 13px; }
+.ind-modal[hidden] {
+  display: none;
 }
-
-body[data-page="indicadores"] .themes { grid-template-columns: 48px minmax(0, 1fr); }
-body[data-page="indicadores"] .theme-tabs { grid-column: 1 / -1; justify-content: flex-start; }
-body[data-page="indicadores"] .indicator-detail { grid-template-columns: minmax(0, 1fr) minmax(190px, .45fr); }
-body[data-page="indicadores"] .detail-meta,
-body[data-page="indicadores"] .detail-action { grid-column: 1 / -1; }
-body[data-page="indicadores"] .detail-meta { flex-wrap: wrap; gap: 14px 28px; }
-body[data-page="indicadores"] .detail-action { justify-self: end; }
-body[data-page="indicadores"] .catalog-table-wrap { max-height: min(48vh, 460px); }
-
-@media (min-width: 761px) and (max-width: 1080px) {
-  body[data-page="indicadores"] .catalog-head { grid-template-columns: minmax(0, 1fr); gap: 12px 24px; }
-  body[data-page="indicadores"] .search-control { grid-column: 2; }
-  body[data-page="indicadores"] .indicator-detail { grid-template-columns: minmax(0, 1fr) auto; }
-  body[data-page="indicadores"] .detail-value { text-align: left; }
+.ind-dialog {
+  width: min(640px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 22px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
-
+.ind-dialog .overline {
+  margin: 0;
+}
+.ind-dialog h2 {
+  margin: 0;
+  font-size: 32px;
+  line-height: 1.1;
+  color: var(--forest);
+}
+.ind-dialog dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.ind-dialog dt {
+  font-size: 12px;
+  color: var(--muted);
+}
+.ind-dialog dd {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 500;
+}
+.ind-dialog dd a {
+  color: var(--forest-2);
+}
+.ind-dialog .full {
+  grid-column: 1 / -1;
+}
+.ind-close {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--forest);
+  color: var(--lime);
+  font-weight: 600;
+  cursor: pointer;
+}
 @media (max-width: 760px) {
-  body[data-page="indicadores"] .indicator-detail { grid-template-columns: minmax(0, 1fr); }
-  body[data-page="indicadores"] .detail-value { text-align: left; }
+  .ind-dialog dl {
+    grid-template-columns: 1fr;
+  }
 }
 
-/* Botões de categoria */
-.cat-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
-.cat-filter[hidden] { display: none; }
-.cat-filter.cat-sub { margin-top: 10px; padding-left: 14px; border-left: 3px solid var(--yellow-ink); }
-.cat-btn { min-height: 38px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; transition: .15s ease; }
-.cat-btn:hover { border-color: var(--forest); color: var(--forest); }
-.cat-btn.active { background: var(--forest); border-color: var(--forest); color: var(--lime); font-weight: 600; }
-.cat-sub .cat-btn { min-height: 34px; font-size: 12px; }
+/* Layout e componentes exclusivos da página Indicadores (3 passos). */
+body[data-page="indicadores"] .catalog-section {
+  padding: 8px 0 0;
+}
+body[data-page="indicadores"] .steps {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+body[data-page="indicadores"] .step-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) minmax(0, 1fr);
+  gap: 20px 40px;
+  align-items: start;
+  padding: 22px 28px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+}
+body[data-page="indicadores"] .step-intro {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+body[data-page="indicadores"] .step-num {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--forest);
+  color: #fff;
+  font-weight: 700;
+  font-size: 17px;
+}
+body[data-page="indicadores"] .step-intro h2 {
+  margin: 0 0 8px;
+  font-size: clamp(20px, 2vw, 25px);
+  line-height: 1.15;
+  color: var(--forest);
+}
+body[data-page="indicadores"] .step-intro p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Passo 1: pesquisa + filtros */
+body[data-page="indicadores"] .step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+body[data-page="indicadores"] .search-control {
+  display: block;
+}
+body[data-page="indicadores"] .step-body .cat-filter {
+  margin-top: 0;
+}
+body[data-page="indicadores"] .catalog-toggle {
+  align-self: flex-start;
+  padding: 6px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--forest);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+body[data-page="indicadores"] .catalog-toggle[hidden] {
+  display: none;
+}
+body[data-page="indicadores"] .catalog-results {
+  grid-column: 1 / -1;
+}
+body[data-page="indicadores"] .catalog-results[hidden] {
+  display: none;
+}
+body[data-page="indicadores"] #catalog-caption {
+  margin: 0;
+}
+
+/* Passo 2: indicador selecionado */
+body[data-page="indicadores"] .step-wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+body[data-page="indicadores"] #step-detail .indicator-detail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 20px 36px;
+  margin: 0;
+  padding: 24px 28px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--blue-ink);
+  border-radius: 0 16px 16px 0;
+  box-shadow: 0 4px 18px rgba(47, 68, 104, 0.08);
+}
+body[data-page="indicadores"] .detail-main {
+  min-width: 0;
+}
+body[data-page="indicadores"] .detail-main .overline {
+  margin: 0 0 6px;
+}
+body[data-page="indicadores"] .detail-main h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-title);
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--forest);
+}
+body[data-page="indicadores"] .detail-desc {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+body[data-page="indicadores"] .detail-value {
+  text-align: left;
+  margin-bottom: 16px;
+}
+body[data-page="indicadores"] .detail-value strong {
+  font-size: clamp(40px, 4.4vw, 58px);
+  font-weight: 600;
+  line-height: 1.05;
+  color: var(--blue-ink);
+}
+/* Caixa com área, ano, leitura e fonte */
+body[data-page="indicadores"] .detail-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 20px;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid #dce6f3;
+  border-radius: 12px;
+  background: #f1f5fb;
+}
+body[data-page="indicadores"] .detail-meta div {
+  min-width: 0;
+}
+body[data-page="indicadores"] .detail-meta dt {
+  margin-bottom: 3px;
+  font-size: 11px;
+}
+body[data-page="indicadores"] .detail-meta dd {
+  font-size: 15px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+body[data-page="indicadores"] .detail-chart {
+  min-width: 0;
+  padding-left: 28px;
+  border-left: 1px solid var(--line);
+}
+body[data-page="indicadores"] .detail-chart .overline {
+  margin: 0 0 4px;
+}
+body[data-page="indicadores"] .detail-chart-sub {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+body[data-page="indicadores"] #detail-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+body[data-page="indicadores"] #detail-chart .history-empty {
+  margin: 20px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+body[data-page="indicadores"] .detail-breakdown {
+  grid-column: 1 / -1;
+}
+
+/* Passo 3: aprofundar a análise */
+body[data-page="indicadores"] .deep-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+body[data-page="indicadores"] .deep-card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: 0 2px 10px rgba(47, 68, 104, 0.08);
+  transition: 0.15s ease;
+}
+body[data-page="indicadores"] .deep-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--forest);
+  box-shadow: 0 8px 22px rgba(47, 68, 104, 0.2);
+}
+body[data-page="indicadores"] .deep-card:focus-visible {
+  outline: 3px solid var(--forest-2);
+  outline-offset: 3px;
+}
+body[data-page="indicadores"] .deep-ico {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  border-radius: 12px;
+  background: #e3ecf8;
+  color: var(--forest-2);
+}
+body[data-page="indicadores"] .deep-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+body[data-page="indicadores"] .deep-text strong {
+  font-size: 15px;
+  color: var(--forest);
+}
+body[data-page="indicadores"] .deep-text i {
+  font-style: normal;
+  margin-left: 4px;
+}
+/* «Comparar municípios» em destaque */
+body[data-page="indicadores"] .deep-primary {
+  background: var(--forest);
+  border-color: var(--forest);
+  box-shadow: 0 8px 22px rgba(47, 68, 104, 0.35);
+}
+body[data-page="indicadores"] .deep-primary .deep-ico {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--lime);
+}
+body[data-page="indicadores"] .deep-primary .deep-text {
+  color: #e3ecf8;
+}
+body[data-page="indicadores"] .deep-primary .deep-text strong {
+  color: var(--lime);
+  font-size: 17px;
+}
+body[data-page="indicadores"] .deep-primary:hover {
+  background: var(--forest-2);
+  border-color: var(--forest-2);
+}
+
+@media (max-width: 1080px) {
+  body[data-page="indicadores"] .step-card {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 22px;
+  }
+  body[data-page="indicadores"] .deep-card {
+    align-items: center;
+  }
+  body[data-page="indicadores"] .deep-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  body[data-page="indicadores"] #step-detail .indicator-detail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  body[data-page="indicadores"] .detail-chart {
+    padding: 16px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
+
+/* Tabela de resultados: letra maior, linha selecionada em destaque */
+body[data-page="indicadores"] .catalog-table-wrap {
+  margin-top: 12px;
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+body[data-page="indicadores"] th {
+  padding: 12px 14px;
+  font-size: 12px;
+  background: transparent;
+  box-shadow: 0 1px 0 var(--line);
+}
+body[data-page="indicadores"] td {
+  padding: 14px;
+  font-size: 16px;
+  line-height: 1.35;
+}
+body[data-page="indicadores"] .catalog-row.active {
+  background: rgba(183, 211, 238, 0.7);
+  box-shadow: inset 8px 0 0 var(--blue-ink);
+}
+body[data-page="indicadores"] .catalog-row.active td {
+  font-weight: 700;
+  color: var(--forest);
+}
+body[data-page="indicadores"] .catalog-row.active td:first-child {
+  padding-left: 22px;
+}
+
+/* Botão «Mostrar mais» */
+.catalog-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 22px 0 8px;
+}
+.catalog-more[hidden] {
+  display: none;
+}
+.catalog-more-btn {
+  min-height: 50px;
+  padding: 0 36px;
+  border: 2px solid var(--forest);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--forest);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+.catalog-more-btn:hover {
+  background: var(--forest);
+  color: var(--lime);
+}
+.catalog-more-btn:focus-visible {
+  outline: 3px solid var(--forest-2);
+  outline-offset: 3px;
+}
+.catalog-more-count {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Botões de categoria: cartões com ícone e legenda (estilo CIG) */
+.cat-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+.cat-filter[hidden] {
+  display: none;
+}
+.cat-filter.cat-sub {
+  margin-top: 10px;
+  padding-left: 14px;
+  border-left: 3px solid var(--yellow-ink);
+}
+.cat-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 112px;
+  min-height: 92px;
+  padding: 12px 8px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+.cat-btn .cat-icon {
+  width: 34px;
+  height: 34px;
+  color: var(--forest-2);
+  transition: 0.15s ease;
+}
+.cat-btn:hover {
+  border-color: var(--forest);
+  color: var(--forest);
+  transform: translateY(-2px);
+}
+.cat-btn:hover .cat-icon {
+  color: var(--forest);
+}
+.cat-btn:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 2px;
+}
+.cat-btn.active {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: var(--lime);
+  font-weight: 600;
+}
+.cat-btn.active .cat-icon {
+  color: var(--lime);
+}
+body[data-page="indicadores"] .cat-btn {
+  flex-direction: row;
+  width: auto;
+  min-height: 40px;
+  padding: 0 20px;
+  gap: 8px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+body[data-page="indicadores"] .cat-btn .cat-icon {
+  width: 18px;
+  height: 18px;
+}
+.cat-sub .cat-btn {
+  width: auto;
+  min-height: 34px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+/* Ícone + nome da área na tabela */
+.area-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.area-cell .cat-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--forest-2);
+}
+@media (max-width: 760px) {
+  .cat-btn {
+    width: calc(33.333% - 7px);
+    min-width: 92px;
+  }
+}
 /* Detalhe por categoria (ex.: Nacionalidade) */
-.detail-breakdown { grid-column: 1 / -1; }
-.detail-breakdown table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.detail-breakdown th { text-align: left; padding: 4px 8px; color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
-.detail-breakdown td { padding: 5px 8px; border-top: 1px solid rgba(0,0,0,.08); }
-.detail-breakdown td:nth-child(2) { font-weight: 600; color: var(--forest); }
+.detail-breakdown {
+  grid-column: 1 / -1;
+}
+.detail-breakdown table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.detail-breakdown th {
+  text-align: left;
+  padding: 4px 8px;
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.detail-breakdown td {
+  padding: 5px 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.detail-breakdown td:nth-child(2) {
+  font-weight: 600;
+  color: var(--forest);
+}
+/* Caixa de pesquisa visível: contorno, fundo branco e lupa */
+body[data-page="indicadores"] .search-control input {
+  height: 52px;
+  padding: 0 18px 0 50px;
+  border: 2px solid var(--forest);
+  border-radius: 999px;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232f4468' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 18px center;
+  background-size: 20px;
+  font: inherit;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(47, 68, 104, 0.15);
+  transition: 0.15s ease;
+}
+body[data-page="indicadores"] .search-control input::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+body[data-page="indicadores"] .search-control input:focus {
+  outline: 0;
+  border-color: var(--forest-2);
+  box-shadow: 0 0 0 4px rgba(74, 120, 176, 0.28);
+}
+
+/* Ícone "i" e painel de informação (definição, fórmula, limitações) */
+.info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: 8px;
+  padding: 0;
+  vertical-align: middle;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--forest-2);
+  cursor: pointer;
+  transition: 0.15s ease;
+}
+.info-btn .cat-icon {
+  width: 20px;
+  height: 20px;
+}
+.info-btn:hover,
+.info-btn[aria-expanded="true"] {
+  background: var(--forest);
+  color: var(--lime);
+}
+.info-btn:focus-visible {
+  outline: 2px solid var(--forest);
+  outline-offset: 2px;
+}
+.detail-title .info-btn {
+  width: 30px;
+  height: 30px;
+}
+.detail-title .info-btn .cat-icon {
+  width: 24px;
+  height: 24px;
+}
+.info-pop {
+  position: fixed;
+  z-index: 90;
+  width: min(380px, calc(100vw - 24px));
+  max-height: 80vh;
+  overflow: auto;
+  padding: 18px 20px;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 12px 36px rgba(21, 59, 50, 0.28);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.info-pop[hidden] {
+  display: none;
+}
+.info-pop .info-title {
+  margin: 14px 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--forest);
+}
+.info-head,
+.info-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.info-head {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #e3ecf8;
+}
+.info-row {
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+}
+.info-title + .info-row {
+  border-top: 0;
+}
+.info-ico {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: var(--forest-2);
+}
+.info-ico .cat-icon {
+  width: 22px;
+  height: 22px;
+}
+.info-head h4,
+.info-row h4 {
+  margin: 0 0 3px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--forest);
+}
+.info-head p,
+.info-row p {
+  margin: 0;
+  color: var(--ink);
+}
+.info-head p {
+  font-size: 12.5px;
+}

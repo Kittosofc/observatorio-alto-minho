@@ -15,7 +15,7 @@
   strip.innerHTML = specs.map(([label, key, d, unit, desc]) => {
     const ds = indicatorValuesByName[key];
     if (!ds || ds.values[REGIAO] == null) return "";
-    return `<article class="mun-card"><div><span class="l">${label}</span><span class="y">${ds.year}</span></div><div class="v"><b>${f(ds.values[REGIAO], d)}</b><small>${unit}</small></div><div class="c">${desc}</div></article>`;
+    return `<article class="mun-card"><span class="l">${label}</span><div class="v"><b>${f(ds.values[REGIAO], d)}</b><small>${unit}</small></div><div class="c">${desc}</div><div class="meta"><span>Ano</span><strong>${ds.year}</strong></div></article>`;
   }).join("");
 })();
 
