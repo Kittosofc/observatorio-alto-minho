@@ -42,4 +42,11 @@
       <p>Dados estatísticos<br><strong>INE · Pordata</strong></p>
     </div>`;
   script.replaceWith(rail);
+
+  // Em telemóvel o menu desliza na horizontal: mostra o separador ativo.
+  const current = rail.querySelector("nav a.active");
+  if (current) {
+    const nav = current.parentElement;
+    nav.scrollLeft = current.offsetLeft - (nav.clientWidth - current.offsetWidth) / 2;
+  }
 })();

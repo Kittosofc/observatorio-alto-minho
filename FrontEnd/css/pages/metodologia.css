@@ -1,4 +1,3 @@
-
 /* Página Metodologia: cartões e etiquetas */
 /* Metodologia */
 
@@ -94,3 +93,35 @@ body[data-page="metodologia"] .method-section {
   background-color: var(--paper) !important;
   min-height: 100vh;
 }
+
+/* Botão e pop-up "Criar cartão" (admin) */
+.method-toolbar { margin: 0 0 20px; }
+.method-toolbar[hidden], .method-modal[hidden] { display: none !important; }
+.method-create {
+  padding: 11px 20px; border: 0; border-radius: 999px; background: var(--forest); color: #fff;
+  font: inherit; font-weight: 600; cursor: pointer; box-shadow: 0 6px 16px rgba(47, 68, 104, 0.25); transition: 0.2s ease;
+}
+.method-create:hover { background: var(--forest-2); transform: translateY(-1px); }
+.method-modal {
+  position: fixed; inset: 0; z-index: 1000; display: grid; place-items: center; padding: 20px;
+  background: rgba(38, 54, 77, 0.55); backdrop-filter: blur(3px);
+}
+.method-dialog {
+  position: relative; display: grid; gap: 14px; width: min(480px, 100%); max-height: 90vh; overflow: auto;
+  padding: 28px; border-radius: 18px; background: var(--white); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+}
+.method-dialog h3 { margin: 0; font-family: var(--font-title); font-size: 1.3rem; color: var(--forest); }
+.method-dialog label { display: grid; gap: 6px; font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+.method-dialog input:not([type="hidden"]), .method-dialog textarea {
+  width: 100%; box-sizing: border-box; padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px;
+  background: var(--paper); font: inherit; font-weight: 400; color: var(--ink); resize: vertical;
+}
+.method-dialog input:focus, .method-dialog textarea:focus { outline: 2px solid var(--forest-2); border-color: transparent; }
+.method-x { position: absolute; top: 12px; right: 14px; border: 0; background: none; font-size: 26px; line-height: 1; color: var(--muted); cursor: pointer; }
+.method-lbl { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.method-lbl small, .method-count { font-weight: 400; font-size: 0.75rem; color: var(--muted); }
+.method-count.full { color: var(--red-ink); font-weight: 700; }
+.method-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.method-cancel { padding: 9px 16px; border: 1px solid var(--line); border-radius: 8px; background: #fff; font: inherit; cursor: pointer; }
+.method-dialog .admin-msg:empty { display: none; }
+.method-card .admin-del { align-self: flex-start; }
