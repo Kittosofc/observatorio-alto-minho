@@ -6,6 +6,12 @@ header('Cache-Control: no-store');
 const DOCS_DIR = __DIR__ . '/../../FrontEnd/docs/';
 const DOCS_DB = __DIR__ . '/data/documentos.json';
 
+function str_len(string $s): int {
+    if (function_exists('mb_strlen')) return mb_strlen($s);
+    $n = preg_match_all('/./us', $s);
+    return $n === false ? strlen($s) : $n;
+}
+
 function load_docs(): array {
     if (!is_file(DOCS_DB)) {
         return [
@@ -42,20 +48,52 @@ $action = $_POST['action'] ?? '';
 if ($action === 'add') {
     $title = trim($_POST['title'] ?? '');
     $desc = trim($_POST['description'] ?? '');
-    if ($title === '' || mb_strlen($title) > 120 || mb_strlen($desc) > 400) {
+    if ($title === '' || str_len($title) > 120 || str_len($desc) > 400) {
         fail(400, 'Título obrigatório (até 120 caracteres) e descrição até 400.');
     }
     $f = $_FILES['pdf'] ?? null;
     if (!$f || $f['error'] !== UPLOAD_ERR_OK) fail(400, 'PDF em falta ou demasiado grande para o servidor.');
     if ($f['size'] > 20 * 1024 * 1024) fail(400, 'O PDF tem mais de 20 MB.');
     if (file_get_contents($f['tmp_name'], false, null, 0, 5) !== '%PDF-') fail(400, 'O ficheiro não é um PDF.');
+    $orig = trim(preg_replace('#[\x00-\x1F\x7F"\\\\/:*?<>|]+#', '', (string)$f['name']));
+    if ($orig === '' || strtolower(substr($orig, -4)) !== '.pdf') $orig = ($orig === '' ? 'documento' : $orig) . '.pdf';
     $id = bin2hex(random_bytes(6));
     $name = $id . '.pdf';
+    if (!is_dir(DOCS_DIR)) mkdir(DOCS_DIR, 0755, true);
     if (!move_uploaded_file($f['tmp_name'], DOCS_DIR . $name)) fail(500, 'Não foi possível gravar o ficheiro.');
-    $docs[] = ['id' => $id, 'title' => $title, 'description' => $desc, 'file' => $name];
+    $docs[] = ['id' => $id, 'title' => $title, 'description' => $desc, 'file' => $name, 'original' => $orig];
     save_docs($docs);
     echo json_encode(array_values($docs), JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+if ($action === 'edit') {
+    $id = $_POST['id'] ?? '';
+    $title = trim($_POST['title'] ?? '');
+    $desc = trim($_POST['description'] ?? '');
+    if ($title === '' || str_len($title) > 120 || str_len($desc) > 400) {
+        fail(400, 'Título obrigatório (até 120 caracteres) e descrição até 400.');
+    }
+    foreach ($docs as $i => $d) {
+        if ($d['id'] !== $id) continue;
+        $f = $_FILES['pdf'] ?? null;
+        if ($f && $f['error'] !== UPLOAD_ERR_NO_FILE) {   // PDF novo é opcional
+            if ($f['error'] !== UPLOAD_ERR_OK) fail(400, 'PDF demasiado grande para o servidor.');
+            if ($f['size'] > 20 * 1024 * 1024) fail(400, 'O PDF tem mais de 20 MB.');
+            if (file_get_contents($f['tmp_name'], false, null, 0, 5) !== '%PDF-') fail(400, 'O ficheiro não é um PDF.');
+            $orig = trim(preg_replace('#[\x00-\x1F\x7F"\\\\/:*?<>|]+#', '', (string)$f['name']));
+            if ($orig === '' || strtolower(substr($orig, -4)) !== '.pdf') $orig = ($orig === '' ? 'documento' : $orig) . '.pdf';
+            if (!is_dir(DOCS_DIR)) mkdir(DOCS_DIR, 0755, true);
+            if (!move_uploaded_file($f['tmp_name'], DOCS_DIR . basename($d['file']))) fail(500, 'Não foi possível gravar o ficheiro.');
+            $docs[$i]['original'] = $orig;
+        }
+        $docs[$i]['title'] = $title;
+        $docs[$i]['description'] = $desc;
+        save_docs($docs);
+        echo json_encode(array_values($docs), JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+    fail(404, 'Documento não encontrado.');
 }
 
 if ($action === 'delete') {

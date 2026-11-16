@@ -73,22 +73,23 @@ body[data-page="transferencias"] .themes {
 
 .doc-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 28px;
+  align-items: start;
   padding-top: 40px;
 }
 
 /* Ecrãs médios: 2 por linha */
 @media (max-width: 1100px) {
   .doc-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 /* Telemóvel: 1 por linha */
 @media (max-width: 640px) {
   .doc-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -110,12 +111,21 @@ body[data-page="transferencias"] .themes {
 .doc-thumb {
   width: 100%;
   aspect-ratio: 4 / 3;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 28px;
+  box-sizing: border-box;
+  background: var(--paper);
   display: block;
 }
 
 .doc-body {
   padding: 20px 22px 24px;
+  min-width: 0;
+}
+.doc-body h3,
+.doc-body p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .doc-body h3 {
   margin: 0 0 10px;

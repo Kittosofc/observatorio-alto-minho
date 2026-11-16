@@ -1,8 +1,30 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-session_set_cookie_params(['httponly' => true, 'samesite' => 'Strict', 'secure' => !empty($_SERVER['HTTPS'])]);
+const SESSAO_INATIVIDADE = 1800; // 30 minutos
+
+$https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+ini_set('session.gc_maxlifetime', (string) SESSAO_INATIVIDADE);
+session_set_cookie_params([
+    'lifetime' => 0,        // cookie dura até fechar o browser
+    'path'     => '/',
+    'domain'   => '',       // só este (sub)domínio, sem partilhar com o site principal
+    'secure'   => $https,
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
+session_name('OBS_ADMIN');  // nome próprio, evita colisão com o PHPSESSID do site
 session_start();
+
+if (!empty($_SESSION['admin'])) {
+    if (time() - ($_SESSION['ultimo'] ?? time()) > SESSAO_INATIVIDADE) {
+        $_SESSION = [];
+        session_destroy();
+        session_start();
+    } else {
+        $_SESSION['ultimo'] = time();
+    }
+}
 
 function is_admin(): bool {
     return !empty($_SESSION['admin']);

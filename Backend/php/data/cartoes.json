@@ -1,10 +1,30 @@
 [
     {
-        "id": "3b37c6c16f56",
-        "title": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-        "text": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "id": "base-1",
+        "title": "Fontes dos dados",
+        "text": "Cada indicador identifica a sua origem, com ligação direta à fonte oficial.",
         "tags": [
-            "AAAAAAAAAAAAAAAAAAAAAAAA"
+            "PORDATA",
+            "INE",
+            "Censos"
+        ]
+    },
+    {
+        "id": "base-2",
+        "title": "Atualização dos dados",
+        "text": "Processo automático semanal: todas as segundas-feiras os dados são consultados às fontes, validados (cobertura, ano e coerência) e só então publicados.",
+        "tags": [
+            "Semanal",
+            "Automático"
+        ]
+    },
+    {
+        "id": "base-3",
+        "title": "Escala territorial",
+        "text": "São apresentados o Alto Minho enquanto NUTS III e os seus 10 municípios, com limites da CAOP (Direção-Geral do Território).",
+        "tags": [
+            "NUTS III Alto Minho",
+            "10 municípios"
         ]
     }
 ]

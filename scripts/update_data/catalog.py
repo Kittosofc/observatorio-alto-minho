@@ -1,8 +1,11 @@
 """Catálogo (catalog-data.js) e gravação final dos ficheiros gerados."""
 from __future__ import annotations
 
+import hashlib
+import re
+
 from .config import (ALIAS_NAME, ALIAS_SOURCE, CATALOG_COMMENT, CATALOG_PATH, CATALOG_VAR, INE_DIRECT,
-                     PORDATA_FIXED_ENTRIES, VALUES_COMMENT, VALUES_PATH, VALUES_VAR)
+                     PORDATA_FIXED_ENTRIES, ROOT, VALUES_COMMENT, VALUES_PATH, VALUES_VAR)
 from .io import read_javascript_object, read_pordata_sources, write_javascript_object
 
 
@@ -43,6 +46,22 @@ def update_catalog_links() -> None:
     write_javascript_object(CATALOG_PATH, CATALOG_COMMENT, CATALOG_VAR, catalog)
 
 
+BOOT_PATH = ROOT / "FrontEnd" / "js" / "shared" / "boot.js"
+
+
+def update_data_version() -> None:
+    """Escreve no boot.js a versão (hash) dos ficheiros de dados, para o browser ir buscar sempre os dados novos.
+    Se os dados não mudaram, a versão mantém-se igual e a cache continua válida."""
+    digest = hashlib.sha1()
+    for path in (VALUES_PATH, CATALOG_PATH):
+        digest.update(path.read_bytes())
+    version = digest.hexdigest()[:10]
+    text = BOOT_PATH.read_text(encoding="utf-8")
+    new_text = re.sub(r'const DATA_VERSION = "[^"]*";', f'const DATA_VERSION = "{version}";', text, count=1)
+    if new_text != text:
+        BOOT_PATH.write_text(new_text, encoding="utf-8", newline="")
+
+
 def write_outputs(values_by_name: dict) -> None:
     """Grava indicator-values.js e catalog-data.js (remove valores de indicadores que já não estão no catálogo)."""
     ensure_catalog_entries(values_by_name)
@@ -51,3 +70,4 @@ def write_outputs(values_by_name: dict) -> None:
         del values_by_name[stale]
     write_javascript_object(VALUES_PATH, VALUES_COMMENT, VALUES_VAR, values_by_name)
     update_catalog_links()
+    update_data_version()

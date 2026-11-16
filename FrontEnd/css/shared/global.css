@@ -1556,6 +1556,18 @@ body:not([data-admin="on"]) #clear {
   font-size: 12px;
   margin-top: 8px;
 }
+.admin-edit {
+  font-size: 12px;
+}
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.admin-actions .admin-del {
+  margin-top: 0;
+}
 .admin-msg {
   font-size: 0.85rem;
   color: var(--red-ink);

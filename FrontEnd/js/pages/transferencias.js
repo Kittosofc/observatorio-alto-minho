@@ -1,4 +1,4 @@
-// Página Documentos: lista vinda do PHP; o admin pode adicionar e eliminar.
+// Página Documentos: lista vinda do PHP; o admin pode adicionar, editar e eliminar.
 (function () {
   const grid = document.querySelector(".doc-grid");
   if (!grid) return;
@@ -21,6 +21,7 @@
       <button class="doc-x" type="button" aria-label="Fechar">×</button>
       <h3 id="doc-dlg-title">Novo documento</h3>
       <input type="hidden" name="action" value="add">
+      <input type="hidden" name="id" value="">
       <label><span class="doc-lbl">Título <small class="doc-count" data-for="title" data-max="120">máx. 120 caracteres</small></span><input name="title" maxlength="120" placeholder="Ex.: Relatório anual 2025" required></label>
       <label><span class="doc-lbl">Descrição <small class="doc-count" data-for="description" data-max="400">máx. 400 caracteres</small></span><textarea name="description" maxlength="400" rows="3" placeholder="Breve descrição do documento"></textarea></label>
       <label class="doc-drop">
@@ -48,9 +49,24 @@
     c.classList.toggle("full", n >= max);
   });
   form.addEventListener("input", updCounts);
-  const open = () => { box.hidden = false; form.title.focus(); };
+  const ttl = box.querySelector("h3"), sub = form.querySelector(".admin-btn");
+  const open = d => {
+    form.elements.action.value = d ? "edit" : "add";
+    form.elements.id.value = d ? d.id : "";
+    ttl.textContent = d ? "Editar documento" : "Novo documento";
+    sub.textContent = d ? "Guardar" : "Adicionar";
+    fileIn.required = !d;
+    if (d) {
+      form.elements.title.value = d.title;
+      form.elements.description.value = d.description || "";
+      fileName.textContent = "Atual: " + (d.original || d.file) + " (escolhe outro só para substituir)";
+    }
+    updCounts();
+    box.hidden = false;
+    form.elements.title.focus();
+  };
   const close = () => { box.hidden = true; form.reset(); updCounts(); fileName.textContent = ""; msg.textContent = ""; };
-  bar.querySelector(".doc-create").addEventListener("click", open);
+  bar.querySelector(".doc-create").addEventListener("click", () => open());
   box.querySelector(".doc-x").addEventListener("click", close);
   box.querySelector(".doc-cancel").addEventListener("click", close);
   box.addEventListener("mousedown", e => { if (e.target === box) close(); });
@@ -77,8 +93,8 @@
         <div class="doc-body">
           <h3>${esc(d.title)}</h3>
           <p>${esc(d.description)}</p>
-          <a class="doc-btn" href="../docs/${encodeURIComponent(d.file)}" download="${esc(d.file)}">Transferir PDF</a>
-          ${adm ? `<button class="admin-del" type="button" data-id="${esc(d.id)}">Eliminar</button>` : ""}
+          <a class="doc-btn" href="../docs/${encodeURIComponent(d.file)}" download="${esc(d.original || d.file)}">Transferir PDF</a>
+          ${adm ? `<div class="admin-actions"><button class="admin-btn admin-edit" type="button" data-id="${esc(d.id)}">Editar</button><button class="admin-del" type="button" data-id="${esc(d.id)}">Eliminar</button></div>` : ""}
         </div>
       </article>`).join("");
   }
@@ -94,6 +110,8 @@
   });
 
   grid.addEventListener("click", async e => {
+    const ed = e.target.closest(".admin-edit");
+    if (ed) { const d = (docs || []).find(x => x.id === ed.dataset.id); if (d) open(d); return; }
     const b = e.target.closest(".admin-del");
     if (!b || !confirm("Eliminar este documento?")) return;
     const fd = new FormData();

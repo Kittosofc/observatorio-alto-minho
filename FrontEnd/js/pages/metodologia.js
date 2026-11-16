@@ -1,10 +1,9 @@
-// Página Metodologia: o admin pode criar e eliminar cartões (os 3 primeiros ficam no HTML).
+// Página Metodologia: o admin pode criar, editar e eliminar todos os cartões (os do HTML só servem de reserva sem PHP).
 (function () {
   const grid = document.querySelector(".method-grid");
   if (!grid) return;
   const api = (window.observatorioBackend || "../../Backend/php/") + "cartoes.php";
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const baseCount = grid.children.length;
   let cards = null;
 
   // Botão "Criar cartão" (só admin)
@@ -23,6 +22,7 @@
       <button class="method-x" type="button" aria-label="Fechar">×</button>
       <h3 id="method-dlg-title">Novo cartão</h3>
       <input type="hidden" name="action" value="add">
+      <input type="hidden" name="id" value="">
       <label><span class="method-lbl">Título <small class="method-count" data-for="title" data-max="80">máx. 80 caracteres</small></span><input name="title" maxlength="80" placeholder="Ex.: Limitações dos dados" required></label>
       <label><span class="method-lbl">Texto <small class="method-count" data-for="text" data-max="500">máx. 500 caracteres</small></span><textarea name="text" maxlength="500" rows="4" placeholder="Explicação que aparece no cartão" required></textarea></label>
       <label><span class="method-lbl">Etiquetas <small>opcional, separadas por vírgula (máx. 6)</small></span><input name="tags" placeholder="Ex.: INE, Anual"></label>
@@ -41,9 +41,19 @@
     c.classList.toggle("full", n >= max);
   });
   form.addEventListener("input", updCounts);
-  const open = () => { box.hidden = false; form.elements.title.focus(); };
+  const ttl = box.querySelector("h3"), sub = form.querySelector(".admin-btn");
+  const open = c => {
+    form.elements.action.value = c ? "edit" : "add";
+    form.elements.id.value = c ? c.id : "";
+    ttl.textContent = c ? "Editar cartão" : "Novo cartão";
+    sub.textContent = c ? "Guardar" : "Adicionar";
+    if (c) { form.elements.title.value = c.title; form.elements.text.value = c.text; form.elements.tags.value = (c.tags || []).join(", "); }
+    updCounts();
+    box.hidden = false;
+    form.elements.title.focus();
+  };
   const close = () => { box.hidden = true; form.reset(); updCounts(); msg.textContent = ""; };
-  bar.querySelector(".method-create").addEventListener("click", open);
+  bar.querySelector(".method-create").addEventListener("click", () => open());
   box.querySelector(".method-x").addEventListener("click", close);
   box.querySelector(".method-cancel").addEventListener("click", close);
   box.addEventListener("mousedown", e => { if (e.target === box) close(); });
@@ -68,14 +78,14 @@
     const adm = !!(window.observatorioAdmin && window.observatorioAdmin.admin);
     bar.hidden = !adm;
     if (!cards) return;
-    grid.querySelectorAll(".method-card[data-id]").forEach(n => n.remove());
+    grid.querySelectorAll(".method-card").forEach(n => n.remove());
     grid.insertAdjacentHTML("beforeend", cards.map((c, i) => `
       <article class="method-card" data-id="${esc(c.id)}">
-        <span class="method-num">${String(baseCount + i + 1).padStart(2, "0")}</span>
+        <span class="method-num">${String(i + 1).padStart(2, "0")}</span>
         <h2>${esc(c.title)}</h2>
         <p>${esc(c.text)}</p>
         ${(c.tags || []).length ? `<div class="tags">${c.tags.map(t => `<span>${esc(t)}</span>`).join("")}</div>` : ""}
-        ${adm ? `<button class="admin-del" type="button" data-id="${esc(c.id)}">Eliminar</button>` : ""}
+        ${adm ? `<div class="admin-actions"><button class="admin-btn admin-edit" type="button" data-id="${esc(c.id)}">Editar</button><button class="admin-del" type="button" data-id="${esc(c.id)}">Eliminar</button></div>` : ""}
       </article>`).join(""));
   }
 
@@ -90,6 +100,8 @@
   });
 
   grid.addEventListener("click", async e => {
+    const ed = e.target.closest(".admin-edit");
+    if (ed) { const c = (cards || []).find(x => x.id === ed.dataset.id); if (c) open(c); return; }
     const b = e.target.closest(".admin-del");
     if (!b || !confirm("Eliminar este cartão?")) return;
     const fd = new FormData();

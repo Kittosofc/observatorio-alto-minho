@@ -4,16 +4,22 @@
 //  data-values -> "1" carrega indicator-values.js (só onde é necessário)
 (function () {
   const me = document.currentScript;
+  const DATA_VERSION = "d8a0063ddb"; // atualizado automaticamente pelo update-data.py
   const js = me.src.replace(/shared\/boot\.js.*$/, "");
   const list = [
-    "data/catalog-data.js",
-    ...(me.dataset.values === "1" ? ["data/indicator-values.js"] : []),
+    `data/catalog-data.js?v=${DATA_VERSION}`,
+    ...(me.dataset.values === "1"
+      ? [`data/indicator-values.js?v=${DATA_VERSION}`]
+      : []),
     "data/catalog-overrides.js",
     "data/map-data.js",
     "shared/app.js",
     "shared/footer.js",
     "shared/admin.js",
-    ...(me.dataset.page || "").split(",").filter(Boolean).map(p => `pages/${p}.js`),
+    ...(me.dataset.page || "")
+      .split(",")
+      .filter(Boolean)
+      .map((p) => `pages/${p}.js`),
   ];
-  list.forEach(f => document.write(`<script src="${js}${f}"><\/script>`));
+  list.forEach((f) => document.write(`<script src="${js}${f}"><\/script>`));
 })();

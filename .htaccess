@@ -1,0 +1,6 @@
+# O boot.js e as páginas HTML têm de ser revalidados sempre, para apanharem a nova versão (?v=) dos dados.
+<IfModule mod_headers.c>
+  <FilesMatch "(boot\.js|\.html)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
