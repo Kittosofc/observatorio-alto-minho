@@ -3,7 +3,9 @@ require_once __DIR__ . '/config.php';
 
 const SESSAO_INATIVIDADE = 1800; // 30 minutos
 
-$https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+// HTTPS direto, ou atrás de um proxy/balanceador que termina o HTTPS (X-Forwarded-Proto).
+$https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+      || strtolower($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
 ini_set('session.gc_maxlifetime', (string) SESSAO_INATIVIDADE);
 session_set_cookie_params([
     'lifetime' => 0,        // cookie dura até fechar o browser

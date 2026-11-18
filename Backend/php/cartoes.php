@@ -40,7 +40,7 @@ function parse_tags(string $raw): array {
     $tags = [];
     foreach (explode(',', $raw) as $t) {
         $t = trim($t);
-        if ($t !== '') $tags[] = str_cut($t, 24);
+        if ($t !== '') $tags[] = $t;
     }
     return array_slice($tags, 0, 6);
 }
